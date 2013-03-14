@@ -1,0 +1,65 @@
+@import url(http://yui.yahooapis.com/2.8.1/build/reset/reset-min.css);
+@import url(http://yui.yahooapis.com/2.8.1/build/base/base-min.css);
+/*@import url(http://fonts.googleapis.com/css?family=Press+Start+2P);*/
+/*@import url(http://fonts.googleapis.com/css?family=Iceland);*/
+@import url(http://fonts.googleapis.com/css?family=Offside);
+
+html {
+    background-color: #333;
+}
+
+body {
+    font-family: 'Offside', sans-serif;
+    font-size: 16pt;
+    color: #fff;
+}
+
+a {
+    text-decoration: none;
+    border-bottom: 1px dotted;
+}
+
+#cr-stage {
+    margin: 25px auto 0 auto;
+    border: 3px dotted #333;
+    background-color: #000;
+}
+
+/* Header */
+header {
+    margin: 25px 0;
+}
+
+header a {
+    color: inherit;
+}
+
+header h1, header h2 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+header h1 {
+    color: #f00;
+}
+
+header h2 {
+    color: #ccc;
+    text-transform: uppercase;
+    font-size: 1em;
+}
+
+/* Instructions */
+.instructions {
+    margin: 25px 0;
+    font-size: 0.8em;
+    text-align: center;
+}
+
+/* Footer */
+footer {
+    margin: 25px 0;
+    text-align: center;
+    font-size: 0.8em;
+}

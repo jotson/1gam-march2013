@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<head>  
+    <title>Reverse Invaders | #1gam March 2013</title>
+    <link href="assets/css/styles.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="lib/crafty.js"></script>
+    <script type="text/javascript" src="source/scenes.js"></script>
+    <script type="text/javascript" src="source/components.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Reverse Invaders</h1>
+        <h2>
+            <a href="http://flagrantdisregard.com">John Watson</a> —
+            <a href="http://onegameamonth.com">#1gam</a> March 2013
+        </h2>
+
+        <section class="instructions">
+            ** TODO Instructions **
+        </section>
+    </header>
+
+    <div id="cr-stage"></div>
+
+    <script type="text/javascript">
+        $(document).ready(
+            function() {
+                Crafty.init(STAGE_W, STAGE_H);
+                Crafty.scene("loading");
+            }
+        );
+    </script>
+
+    <footer>
+        ** TODO Credits **
+    </footer>
+</body>
+</html>
