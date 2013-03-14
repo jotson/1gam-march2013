@@ -18,10 +18,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 **/
 
-var STAGE_W = 700;
-var STAGE_H = 500;
-var FONTFACE = 'Offside';
-
 Crafty.scene("loading",
     function() {
         var status = Crafty.e("2D, DOM, Text");
@@ -43,7 +39,11 @@ Crafty.scene("loading",
                 console.log("Loading complete");
 
                 Crafty.sprite(50, "assets/images/invader1.png", {
-                    invader1: [0,0]
+                    invader0: [0,0],
+                    invader1: [0,0],
+                    invader2: [0,0],
+                    invader3: [0,0],
+                    invader4: [0,0]
                 });
 
                 Crafty.scene("menu");
@@ -61,20 +61,8 @@ Crafty.scene("menu",
     function() {
         console.log("Starting menu");
 
-        for (i = 0; i <= 10; i++) {
-            Crafty.e("invader, invader1").attr({ x: 75 + 50 * i, y: 100 }).fly(50);
-        }
-        for (i = 0; i <= 10; i++) {
-            Crafty.e("invader, invader1").attr({ x: 75 + 50 * i, y: 150 }).fly(50);
-        }
-        for (i = 0; i <= 10; i++) {
-            Crafty.e("invader, invader1").attr({ x: 75 + 50 * i, y: 200 }).fly(50);
-        }
-
-        // TODO Awesome graphics
-        // TODO Music
         // TODO Play button
-        // Crafty.scene("playing");
+        Crafty.scene("playing");
     }
 );
 
@@ -82,18 +70,31 @@ Crafty.scene("playing",
     function() {
         console.log("Starting play");
 
+        // Create invaders
+        var yOffset = 50;
+        var xOffset = STAGE_W/2 - INVADER_COLS*INVADER_WIDTH/2;
+
+        // First, create entity to control movement of all invaders
+        var group = Crafty.e("invader-group").attr({ x: xOffset, y: yOffset });
+
+        for (y = 0; y < INVADER_ROWS; y++) {
+            for (x = 0; x < INVADER_COLS; x++) {
+                group.attach(
+                    Crafty.e('invader' + y + ', invader')
+                        .attr({ x: xOffset + x * INVADER_WIDTH, y: yOffset + y * INVADER_HEIGHT })
+                        .fly(50)
+                );
+            }
+        }
+
+        // Create humans
+        Crafty.e("")
+
         // Show FPS
         var fps = Crafty.e("2D, DOM, Text");
         fps.textColor("#333333");
         fps.textFont({ size: '12px', weight: 'bold', family: FONTFACE });
         fps.attr({ w: 50, x: 5, y: STAGE_H - 18 });
         fps.text("FPS: " + Crafty.timer.getFPS());
-    }
-);
-
-
-Crafty.scene("gameover",
-    function() {
-        console.log("Game over");
     }
 );

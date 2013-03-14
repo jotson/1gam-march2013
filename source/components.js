@@ -28,20 +28,38 @@ Crafty.c("defender", {
 });
 
 Crafty.c("invader", {
+    _startX: null,
+    _startY: null,
+    _speed: 50,
+    _dodging: false,
+
     init: function() {
-        this.requires("2D, Canvas, SpriteAnimation, solid");
-        this.attr({ w: 100, h: 100 });
+        this.requires("2D, Canvas, SpriteAnimation, Mouse, solid");
+        this.attr({ w: INVADER_WIDTH, h: INVADER_HEIGHT });
 
         this.bind("EnterFrame",
             function() {
             }
         );
+
+        this.bind("MouseMove",
+            function(e) {
+                if (!this._dodging) {
+                    // TODO Dodge for x seconds and then go back into position
+                    // this._dodging = true;
+                }
+            }
+        );
     },
 
     fly: function(speed) {
+        this._startX = this.x;
+        this._startY = this.y;
+
         var max = 200;
         if (speed >= 100) { speed = 100; }
         if (speed <= 0) { speed = 0; }
+        this._speed = speed;
         if (speed > 0) {
             this.animate("fly", 0, 0, 1);
             this.animate("fly", 1 + max - max*speed/100, -1);
@@ -52,8 +70,55 @@ Crafty.c("invader", {
     }
 });
 
+Crafty.c("invader-group", {
+    _speed: 10, // pixels/s
+    _dir: -1, // left
+
+    init: function() {
+        this.requires("2D, Canvas");
+        this.attr({ w: INVADER_WIDTH * INVADER_COLS, h: INVADER_HEIGHT * INVADER_ROWS })
+
+        // TODO Change height and width based on locations of attached invaders
+        
+        this.bind("EnterFrame",
+            function() {
+                if (this.y + this.attr('h') >= STAGE_H) {
+                    // TODO Invaders win
+                    console.log("You win!");
+                    return;
+                }
+
+                this.x += this._dir * this._speed * 1/Crafty.timer.getFPS();
+                if (this.x <= 0 || this.x + this.attr('w') >= STAGE_W) {
+                    // Change direction and move down
+                    this._dir = this._dir * -1;
+                    this.y += INVADER_HEIGHT * 0.2;
+
+                    this._speed += 5;
+
+                    for(var i = 0; i < this._children.length; i++) {
+                        var invader = this._children[i];
+                        invader.fly(invader._speed + 1);
+                    }
+                }
+            }
+        );
+    }
+});
+
+Crafty.c("human", {
+    init: function() {
+        this.requires("2D, Canvas, SpriteAnimation, solid");
+        this.bind("EnterFrame",
+            function() {
+            }
+        );
+    }
+});
+
 Crafty.c("block", {
     init: function() {
+        this.requires("2D, Canvas, SpriteAnimation, solid");
         this.bind("EnterFrame",
             function() {
             }
@@ -63,6 +128,7 @@ Crafty.c("block", {
 
 Crafty.c("missile", {
     init: function() {
+        this.requires("2D, Canvas, SpriteAnimation, solid");
         this.bind("EnterFrame",
             function() {
             }
@@ -72,6 +138,7 @@ Crafty.c("missile", {
 
 Crafty.c("bomb", {
     init: function() {
+        this.requires("2D, Canvas, SpriteAnimation, solid");
         this.bind("EnterFrame",
             function() {
             }
