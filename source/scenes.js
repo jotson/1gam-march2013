@@ -102,6 +102,9 @@ Crafty.scene("playing",
         createBunker(425, 400);
         createBunker(575, 400);
 
+        // Add human to stage
+        var h = Crafty.e("human");
+
         // Ready?
         var msg = Crafty.e("2D, DOM, Text, Delay, Tween, blink");
         msg.text("GET READY!");
@@ -109,7 +112,9 @@ Crafty.scene("playing",
         msg.attr({ w: STAGE_W, x: 0, y: 5 });
         msg.delay(function() {
             msg.destroy();
-            Crafty.e("human");
+
+            // Start shooting!
+            h.fire();
         }, 4700);
 
         // Show FPS

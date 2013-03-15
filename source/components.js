@@ -225,7 +225,6 @@ Crafty.c("human", {
         this.requires("2D, Canvas, SpriteAnimation, Delay, Tween, human_sprite, solid");
         this.attr({ w: HUMAN_WIDTH, h: HUMAN_HEIGHT, x: STAGE_W/2 - HUMAN_WIDTH/2, y: 475 });
         this.changeDirection();
-        this.fire();
 
         this.bind("EnterFrame", function() {
             this.x += this._dir * this._speed * 1.0/Crafty.timer.getFPS();
