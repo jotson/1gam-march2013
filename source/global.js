@@ -49,3 +49,24 @@ function createBunker(x, y) {
         }
     }
 }
+
+function invadersWin() {
+    if (DEBUG) console.log("Invaders win!");
+
+    var invaders = Crafty(Crafty("invader-group")[0]);
+    var human = Crafty(Crafty("human")[0]);
+
+    invaders.unbind("EnterFrame");
+
+    Crafty.e("explosion-human").attr({ x: human.x + HUMAN_WIDTH/2, y: human.y + HUMAN_HEIGHT/2 });
+    Crafty(human).destroy();
+}
+
+function humansWin() {
+    if (DEBUG) console.log("Humans win!");
+
+    var invaders = Crafty(Crafty("invader-group")[0]);
+    var human = Crafty(Crafty("human")[0]);
+
+    invaders.unbind("EnterFrame");
+}

@@ -18,7 +18,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 **/
 
-// TODO Explosions
 // TODO Sounds
 // TODO Music
 // TODO Menu
@@ -27,10 +26,8 @@ SOFTWARE.
 // TODO Bombs hitting missiles
 // TODO Bombs hitting human
 // TODO Bombs hitting bottom of stage
-// TODO Invader collision with human
-// TODO Invader collision with block
-// TODO Missile collision with block
-// TODO Bomb collision with block
+// TODO Invader hitting human
+// TODO Invader hitting block
 
 Crafty.c("invader", {
     _startX: null,
@@ -43,6 +40,21 @@ Crafty.c("invader", {
 
         this.requires("Collision").collision([10,10], [40,10], [45,38], [5,38]);
         if (DEBUG) this.requires("WiredHitBox");
+        this.onHit("solid", function(hits) {
+            if (!this.has("invader")) return;
+            
+            for(var i = 0; i < hits.length; i++) {
+                var other = hits[i].obj;
+                if (other.has("block")) {
+                    Crafty.e("explosion-block").attr({ x: this.x, y: this.y });
+                    other.destroy();
+                }
+
+                if (other.has("human")) {
+                    invadersWin();
+                }
+            }
+        });
 
         this.bind("EnterFrame", function() {
             // TODO Collision with human
@@ -149,7 +161,7 @@ Crafty.c("invader-group", {
 
                     // Change direction and move down
                     this._dir = this._dir * -1;
-                    this.y += INVADER_HEIGHT * 0.2;
+                    this.y += INVADER_HEIGHT * 0.3;
 
                     this._speed += 10;
 
@@ -160,9 +172,7 @@ Crafty.c("invader-group", {
                 }
 
                 if (this._bottomEdge.y + INVADER_HEIGHT >= STAGE_H) {
-                    // TODO Invaders have landed
-                    if (DEBUG) console.log("Invaders win!");
-                    Crafty.pause();
+                    invadersWin();
                 }
             }
         });
@@ -190,9 +200,7 @@ Crafty.c("invader-group", {
         }
 
         if (invaders.length == 0) {
-            // TODO Humans win
-            if (DEBUG) console.log("Humans win!");
-            Crafty.pause();
+            humansWin();
         }
     }
 });
@@ -291,7 +299,9 @@ Crafty.c("missile", {
                 var other = hits[i].obj;
                 if (other.has("invader")) {
                     Crafty.e("explosion-invader").attr({ x: other.x + other.attr('w')/2, y: other.y + other.attr('h')/2 });
-                    other.destroy();
+                    // other.destroy();
+                    other.addComponent("crash");
+                    other.removeComponent("invader");
                     this.destroy();
 
                     var invaders = Crafty('invader-group');
@@ -339,6 +349,44 @@ Crafty.c("blink", {
         this.bind("EnterFrame", function() {
             this.alpha = Math.abs(Math.sin(this._n)) * 1.0;
             this._n += Math.PI * 1.0/Crafty.timer.getFPS();
+        });
+    }
+});
+
+Crafty.c("crash", {
+    _speed: -100, // pixels/s
+    _gravity: 15, // pixels/s/s
+    _vx: 0,
+    _vr: 0,
+
+    init: function() {
+        this.requires("2D, Canvas, SpriteAnimation, Mouse");
+
+        if (this._parent) {
+            this._parent.detach(this);
+        }
+
+        this._vx = Crafty.math.randomInt(-100, 100);
+        this._vr = Crafty.math.randomInt(-360, 360);
+        this.stop();
+
+        this.attr({ w: INVADER_WIDTH, h: INVADER_HEIGHT });
+
+        var sparks = Crafty.e("sparks").attr({ x: this.x + INVADER_WIDTH/2, y: this.y + INVADER_HEIGHT/2 });
+
+        this.bind("EnterFrame", function() {
+            this._speed += this._gravity;
+            this.y += this._speed * 1.0/Crafty.timer.getFPS();
+            this.x += this._vx * 1.0/Crafty.timer.getFPS();
+            this.origin(INVADER_WIDTH/2, INVADER_HEIGHT/2);
+            this.rotation += this._vr * 1.0/Crafty.timer.getFPS();
+
+            sparks.x = this.x + INVADER_WIDTH/2;
+            sparks.y = this.y + INVADER_HEIGHT/2;
+
+            if (this.y > STAGE_W) {
+                this.destroy();
+            }
         });
     }
 });
@@ -392,6 +440,30 @@ Crafty.c("explosion-shield", {
     }
 });
 
+Crafty.c("explosion-human", {
+    init: function() {
+        this.requires("Particles");
+        this.particles({
+            maxParticles: 100,
+            size: 2,
+            speed: 1,
+            lifeSpan: 50,
+            angleRandom: 360,
+            startColour: [255, 255, 255, 1],
+            startColourRandom: [255, 255, 255, 1],
+            endColour: [0, 0, 0, 0],
+            sharpness: 20,
+            fastMode: true,
+            sharpnessRandom: 10,
+            spread: 10,
+            duration: 10,
+            gravity: { x: 0, y: 0.1 },
+            jitter: 0
+        });
+
+        this.timeout(function() { this.destroy(); }, 1000);
+    }
+});
 
 Crafty.c("explosion-block", {
     init: function() {
@@ -415,5 +487,31 @@ Crafty.c("explosion-block", {
         });
 
         this.timeout(function() { this.destroy(); }, 1000);
+    }
+});
+
+Crafty.c("sparks", {
+    init: function() {
+        this.requires("Particles");
+        this.particles({
+            maxParticles: 200,
+            size: 1,
+            speed: 0.2,
+            lifeSpan: 200,
+            angle: 180,
+            angleRandom: 45,
+            startColour:       [255, 0, 0, 1],
+            startColourRandom: [255, 255, 0, 1],
+            endColour: [255, 255, 255, 0],
+            sharpness: 20,
+            fastMode: true,
+            sharpnessRandom: 10,
+            spread: 10,
+            duration: 200,
+            gravity: { x: 0, y: 0.1 },
+            jitter: 0
+        });
+
+        this.timeout(function() { this.destroy(); }, 3000);
     }
 });
