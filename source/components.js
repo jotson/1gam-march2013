@@ -42,11 +42,10 @@ Crafty.c("invader", {
         if (DEBUG) this.requires("WiredHitBox");
         this.onHit("solid", function(hits) {
             if (!this.has("invader")) return;
-            
+
             for(var i = 0; i < hits.length; i++) {
                 var other = hits[i].obj;
                 if (other.has("block")) {
-                    Crafty.e("explosion-block").attr({ x: this.x, y: this.y });
                     other.destroy();
                 }
 
@@ -302,6 +301,7 @@ Crafty.c("missile", {
                     // other.destroy();
                     other.addComponent("crash");
                     other.removeComponent("invader");
+                    other.attr({ z: 0 });
                     this.destroy();
 
                     var invaders = Crafty('invader-group');
