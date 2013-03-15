@@ -10,7 +10,7 @@ html {
 
 body {
     font-family: 'Offside', sans-serif;
-    font-size: 16pt;
+    font-size: 20px;
     color: #fff;
 }
 
@@ -21,7 +21,7 @@ a {
 
 #cr-stage {
     margin: 25px auto 0 auto;
-    border: 3px dotted #333;
+    /*border: 3px dotted #333;*/
     background-color: #000;
 }
 
@@ -57,9 +57,23 @@ header h2 {
     text-align: center;
 }
 
+.instructions h1 {
+    font-size: 1em;
+    font-color: inherit;
+}
+
+.instructions p {
+    margin: 0;
+    padding: 0;
+}
+
 /* Footer */
 footer {
     margin: 25px 0;
     text-align: center;
-    font-size: 0.8em;
+    font-size: 0.6em;
+}
+
+footer a {
+    color: #f00;
 }
