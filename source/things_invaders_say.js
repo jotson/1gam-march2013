@@ -1,3 +1,26 @@
+/**
+Reverse Invaders
+Copyright 2013 John Watson <john@flagrantdisregard.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+**/
+
 var THINGS_INVADERS_SAY = [
     "Noooo!",
     "They got Kenny!",
@@ -18,7 +41,7 @@ var THINGS_INVADERS_SAY = [
     "9 out of 10 earthlings welcome us!",
     "Oh crap...",
     "Stop shooting at me!",
-    "Holy crap, we're all doing JUMPING JACKS!",
+    "Why are we all doing JUMPING JACKS!",
     "Why can't I activate my own shield?!",
     "Who designed these controls?!",
     "This human is a terrible shot but he's got lot's of ammo!",
@@ -39,4 +62,6 @@ var THINGS_INVADERS_SAY = [
     "Can I get a bigger shield? Or one that just STAYS ON?",
     "Oh noes!",
     "My God, it's full of stars!",
+    "It's a slaughter!",
+    "My leg!",
 ];

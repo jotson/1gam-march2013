@@ -1,4 +1,7 @@
 /**
+Reverse Invaders
+Copyright 2013 John Watson <john@flagrantdisregard.com>
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights to
@@ -22,6 +25,7 @@ SOFTWARE.
 // TODO Music
 // TODO Menu
 // TODO Restart menu
+// TODO Starfield
 
 Crafty.c("invader", {
     _startX: null,
@@ -336,7 +340,7 @@ Crafty.c("bomb", {
 
     init: function() {
         this.requires("2D, Canvas, SpriteAnimation, bomb_sprite, solid");
-        this.attr({ w: 8, h: 8, z: 0 });
+        this.attr({ w: 8, h: 8, z: -1 });
 
         this.requires("Collision").collision();
         this.onHit("solid", function(hits) {
