@@ -38,6 +38,9 @@ var BLOCK_HEIGHT = 4;
 var HUMAN_WIDTH = 50;
 var HUMAN_HEIGHT = 50;
 
+var FPS = Crafty.timer.getFPS();
+var T = 1.0/FPS;
+
 function createBunker(x, y) {
     if (DEBUG) console.log("Creating bunker at " + x + ", " + y);
 

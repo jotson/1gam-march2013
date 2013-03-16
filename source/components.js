@@ -112,7 +112,7 @@ Crafty.c("invader", {
 });
 
 Crafty.c("shield", {
-    _lifetime: 50,
+    _lifetime: 2 * FPS, // 2 seconds
 
     init: function() {
         if (DEBUG) console.log("Shield activated");
@@ -149,7 +149,7 @@ Crafty.c("invader-group", {
         // this.requires("Color").color('#00300');
 
         this.bind("EnterFrame", function() {
-            this.x += this._dir * this._speed * 1.0/Crafty.timer.getFPS();
+            this.x += this._dir * this._speed * T;
 
             if (this._leftEdge == null || this._rightEdge == null || this._bottomEdge == null) {
                 this.findEdges();
@@ -161,7 +161,7 @@ Crafty.c("invader-group", {
                     this._dir = this._dir * -1;
                     this.y += INVADER_HEIGHT * 0.3;
 
-                    this._speed += 10;
+                    this._speed += 5;
 
                     // for(var i = 0; i < this._children.length; i++) {
                     //     var invader = this._children[i];
@@ -205,8 +205,8 @@ Crafty.c("invader-group", {
 
 Crafty.c("block", {
     init: function() {
-        this.requires("2D, Canvas, Color, solid");
-        this.attr({ w: BLOCK_WIDTH, h: BLOCK_HEIGHT });
+        this.requires("2D, DOM, Color, solid");
+        this.attr({ w: BLOCK_WIDTH, h: BLOCK_HEIGHT, z: 100 });
         this.color("#ff0000");
 
         this.bind("EnterFrame", function() {
@@ -218,15 +218,16 @@ Crafty.c("block", {
 Crafty.c("human", {
     _dir: -1,
     _speed: 200, // pixels/s
-    _shotRecharge: 250, // milliseconds
+    _shotRecharge: 200, // milliseconds
+    _fastMode: false,
 
     init: function() {
-        this.requires("2D, Canvas, SpriteAnimation, Delay, Tween, human_sprite, solid");
-        this.attr({ w: HUMAN_WIDTH, h: HUMAN_HEIGHT, x: STAGE_W/2 - HUMAN_WIDTH/2, y: 475 });
+        this.requires("2D, DOM, SpriteAnimation, Delay, human_sprite, solid");
+        this.attr({ w: HUMAN_WIDTH, h: HUMAN_HEIGHT, x: STAGE_W/2 - HUMAN_WIDTH/2, y: 475, z: 10 });
         this.changeDirection();
 
         this.bind("EnterFrame", function() {
-            this.x += this._dir * this._speed * 1.0/Crafty.timer.getFPS();
+            this.x += this._dir * this._speed * T;
 
             if (this.x <= 0) {
                 this._dir = 1;
@@ -266,14 +267,23 @@ Crafty.c("human", {
             Crafty.e("missile").attr({ x: this.x + HUMAN_WIDTH/2, y: this.y });
         }
 
-        this.delay(this.fire, this._shotRecharge);
+        if (this._fastMode) {
+            this.delay(this.fire, this._shotRecharge/4);
+        } else {
+            this.delay(this.fire, this._shotRecharge);
+        }
     },
 
     changeDirection: function() {
         var max_delay = 6000;
 
+        this._fastMode = false;
+
         this._dir = Crafty.math.randomInt(-1,1);
-        if (this._dir == 0) max_delay = 2000;
+        if (this._dir == 0) {
+            max_delay = 2000;
+            this._fastMode = true;
+        }
 
         this.delay(this.changeDirection, Crafty.math.randomInt(1000,max_delay));
     },
@@ -289,7 +299,7 @@ Crafty.c("missile", {
     _acceleration: 50, // pixels/s/s
     
     init: function() {
-        this.requires("2D, Canvas, SpriteAnimation, Color, missile_sprite, solid");
+        this.requires("2D, DOM, SpriteAnimation, Color, missile_sprite, solid");
         this.attr({ w: 2, h: 4 });
         this.color('#ff0000');
 
@@ -323,9 +333,9 @@ Crafty.c("missile", {
         });
 
         this.bind("EnterFrame", function() {
-            this._speed += this._acceleration * 1.0/Crafty.timer.getFPS();
+            this._speed += this._acceleration * T;
             if (this._speed > this._max_speed) this._speed = this._max_speed;
-            this.y -= this._speed * 1.0/Crafty.timer.getFPS();
+            this.y -= this._speed * T;
 
             if (this.y <= 0) {
                 Crafty.e("explosion-shield").attr({ x: this.x, y: this.y });
@@ -336,11 +346,11 @@ Crafty.c("missile", {
 });
 
 Crafty.c("bomb", {
-    _speed: 250,
+    _speed: 250, // pixels/s
     _hp: 5,
 
     init: function() {
-        this.requires("2D, Canvas, SpriteAnimation, bomb_sprite, solid");
+        this.requires("2D, DOM, SpriteAnimation, bomb_sprite, solid");
         this.attr({ w: 8, h: 8, z: -1 });
 
         this.requires("Collision").collision();
@@ -375,7 +385,7 @@ Crafty.c("bomb", {
         this.requires("Color").color('#3399ff');
 
         this.bind("EnterFrame", function() {
-            this.y += this._speed * 1.0/Crafty.timer.getFPS();
+            this.y += this._speed * T;
 
             if (this.y > STAGE_H) {
                 Crafty.e("explosion-bomb").attr({ x: this.x, y: this.y });
@@ -392,14 +402,14 @@ Crafty.c("blink", {
     init: function() {
         this.bind("EnterFrame", function() {
             this.alpha = Math.abs(Math.sin(this._n)) * 1.0;
-            this._n += Math.PI * 1.0/Crafty.timer.getFPS();
+            this._n += Math.PI * T;
         });
     }
 });
 
 Crafty.c("crash", {
     _speed: -100, // pixels/s
-    _gravity: 15, // pixels/s/s
+    _gravity: 15, // pixels/s
     _vx: 0,
     _vr: 0,
 
@@ -421,10 +431,10 @@ Crafty.c("crash", {
         this.bind("EnterFrame", function() {
             this.alpha = Crafty.math.randomNumber(0, 1);
             this._speed += this._gravity;
-            this.y += this._speed * 1.0/Crafty.timer.getFPS();
-            this.x += this._vx * 1.0/Crafty.timer.getFPS();
+            this.y += this._speed * T;
+            this.x += this._vx * T;
             this.origin(INVADER_WIDTH/2, INVADER_HEIGHT/2);
-            this.rotation += this._vr * 1.0/Crafty.timer.getFPS();
+            this.rotation += this._vr * T;
 
             smoke.x = this.x + INVADER_WIDTH/2;
             smoke.y = this.y + INVADER_HEIGHT/2;
@@ -436,14 +446,46 @@ Crafty.c("crash", {
     }
 });
 
+Crafty.c("starfield", {
+    _stars: 100,
+    _minSpeed: 10, // pixels/s
+    _maxSpeed: 50, // pixels/s
+    _maxSize: 3,
+
+    init: function() {
+        for(var i = 0; i < this._stars; i++) {
+            this.addStar();
+        }
+    },
+
+    addStar: function(x, y) {
+        if (x == null || x == undefined) x = Crafty.math.randomInt(1, STAGE_W);
+        if (y == null || y == undefined) y = Crafty.math.randomInt(1, STAGE_H);
+        var speed = Crafty.math.randomInt(this._minSpeed, this._maxSpeed);
+        var alpha = speed / this._maxSpeed * 0.9;
+        var size = Math.ceil(speed / this._maxSpeed * this._maxSize);
+
+        var star = Crafty.e("2D, DOM, Color")
+        star.attr({ x: x, y: y, z: 0, w: size, h: size, alpha: alpha, speed: speed });
+        star.color('#ffffff');
+        star.bind("EnterFrame", function() {
+            this.y += this.attr('speed') * T;
+            if (this.y > STAGE_H) {
+                this.x = Crafty.math.randomInt(1, STAGE_W);
+                this.y = -10;
+            }
+        });
+    },
+});
+
 Crafty.c("explosion-invader", {
     init: function() {
-        this.requires("Particles");
+        this.requires("2D, Particles");
         this.particles({
             maxParticles: 50,
             size: 2,
-            speed: 5,
-            lifeSpan: 20,
+            speed: 250 * T,
+            lifeSpan: 0.5 * FPS,
             angleRandom: 360,
             startColour: [100, 255, 0, 1],
             endColour:   [255, 255, 0, 0],
@@ -451,7 +493,7 @@ Crafty.c("explosion-invader", {
             fastMode: true,
             spread: 0,
             duration: 1,
-            gravity: { x: 0, y: 0.1 },
+            gravity: { x: 0, y: 5 * T },
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
@@ -462,12 +504,12 @@ Crafty.c("explosion-invader", {
 
 Crafty.c("explosion-bomb", {
     init: function() {
-        this.requires("Particles");
+        this.requires("2D, Particles");
         this.particles({
             maxParticles: 25,
             size: 2,
-            speed: 5,
-            lifeSpan: 50,
+            speed: 250 * T,
+            lifeSpan: 1 * FPS,
             angle: 0,
             angleRandom: 90,
             startColour: [60, 120, 255, 1],
@@ -476,7 +518,7 @@ Crafty.c("explosion-bomb", {
             fastMode: true,
             spread: 0,
             duration: 1,
-            gravity: { x: 0, y: 0.2 },
+            gravity: { x: 0, y: 5 * T },
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
@@ -487,12 +529,12 @@ Crafty.c("explosion-bomb", {
 
 Crafty.c("explosion-shield", {
     init: function() {
-        this.requires("Particles");
+        this.requires("2D, Particles");
         this.particles({
             maxParticles: 25,
             size: 2,
-            speed: 1,
-            lifeSpan: 25,
+            speed: 50 * T,
+            lifeSpan: 0.5 * FPS,
             angle: 180,
             angleRandom: 90,
             startColour: [255, 255, 255, 1],
@@ -501,7 +543,7 @@ Crafty.c("explosion-shield", {
             fastMode: true,
             spread: 5,
             duration: 1,
-            gravity: { x: 0, y: 0.2 },
+            gravity: { x: 0, y: 5 * T },
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
@@ -512,13 +554,13 @@ Crafty.c("explosion-shield", {
 
 Crafty.c("explosion-human", {
     init: function() {
-        this.requires("Particles");
+        this.requires("2D, Particles");
         this._Particles.emissionRate = 9999;
         this.particles({
             maxParticles: 100,
             size: 2,
-            speed: 5,
-            lifeSpan: 50,
+            speed: 250 * T,
+            lifeSpan: 1 * FPS,
             angle: 0,
             angleRandom: 90,
             startColour: [255, 255, 255, 1],
@@ -528,7 +570,7 @@ Crafty.c("explosion-human", {
             fastMode: true,
             spread: 0,
             duration: 1,
-            gravity: { x: 0, y: 0.2 },
+            gravity: { x: 0, y: 5 * T },
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
@@ -539,12 +581,12 @@ Crafty.c("explosion-human", {
 
 Crafty.c("explosion-block", {
     init: function() {
-        this.requires("Particles");
+        this.requires("2D, Particles");
         this.particles({
             maxParticles: 20,
             size: 2,
-            speed: 3,
-            lifeSpan: 25,
+            speed: 150 * T,
+            lifeSpan: 0.5 * FPS,
             angle: 0,
             angleRandom: 90,
             startColour: [255, 0, 0, 1],
@@ -553,7 +595,7 @@ Crafty.c("explosion-block", {
             fastMode: true,
             spread: 0,
             duration: 1,
-            gravity: { x: 0, y: 0.2 },
+            gravity: { x: 0, y: 5 * T },
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
@@ -564,13 +606,13 @@ Crafty.c("explosion-block", {
 
 Crafty.c("smoke", {
     init: function() {
-        this.requires("Particles");
+        this.requires("2D, Particles");
         this.particles({
             maxParticles: 200,
             size: 1,
             sizeRandom: 5,
             speed: 0,
-            lifeSpan: 25,
+            lifeSpan: 0.5 * FPS,
             angle: 0,
             angleRandom: 45,
             startColour:       [120, 120, 180, 0.7],
@@ -580,7 +622,7 @@ Crafty.c("smoke", {
             fastMode: true,
             spread: 5,
             duration: -1,
-            gravity: { x: 0, y: -0.025 },
+            gravity: { x: 0, y: -1.25 * T },
             jitter: 0
         });
 

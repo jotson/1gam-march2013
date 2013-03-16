@@ -81,6 +81,9 @@ Crafty.scene("playing",
     function() {
         if (DEBUG) console.log("Starting play");
 
+        // Create starfield
+        Crafty.e("starfield");
+        
         // Create invaders
         var yOffset = 50;
         var xOffset = 25;
