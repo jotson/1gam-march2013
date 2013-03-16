@@ -27,3 +27,4 @@ Move the mouse pointer over ships to activate their shields. Try to block incomi
 - Working with text has a quirk where if you want multiple text entities with different attributes on screen at the same time then you *must* use DOM for text and you *must* use the css() method instead of textFont().
 - The entity attachment system is wonderful. In this game, there is a single entity that all of the individual invaders are simply attached to. That parent entity contains the movement AI and all of the invaders are just carried along with it. In turn, the shields are attached to the invaders.
 - Changing the width and height of an entity with attached sprites causes strange drawing glitches.
+- Set DEBUG = true in global.js to see collision hitboxes and console logging.
