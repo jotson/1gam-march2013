@@ -83,7 +83,7 @@ Crafty.scene("playing",
 
         // Create starfield
         Crafty.e("starfield");
-        
+
         // Create invaders
         var yOffset = 50;
         var xOffset = 25;
@@ -122,10 +122,12 @@ Crafty.scene("playing",
             h.fire();
         }, 4700);
 
-        // Show FPS
-        var fps = Crafty.e("2D, DOM, Text");
-        fps.text("FPS: " + Crafty.timer.getFPS());
-        fps.attr({ w: 50, x: 5, y: STAGE_H - 18 });
-        fps.css({ 'color': '#333333', 'font-size': '12px', 'font-family': FONTFACE });
+        // Show stats
+        var stats = Crafty.e("2D, DOM, Text");
+        stats.attr({ w: STAGE_W-10, x: 5, y: 5 });
+        stats.css({ 'color': '#444444', 'font-size': '12px', 'text-align': 'right', 'font-family': FONTFACE });
+        stats.bind("EnterFrame", function() {
+            stats.text("FPS: " + Crafty.timer.getFPS() + " — Entities: " + Crafty('*').length);
+        });
     }
 );

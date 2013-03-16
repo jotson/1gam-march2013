@@ -220,6 +220,7 @@ Crafty.c("human", {
     _speed: 200, // pixels/s
     _shotRecharge: 200, // milliseconds
     _fastMode: false,
+    _frozen: false,
 
     init: function() {
         this.requires("2D, DOM, SpriteAnimation, Delay, human_sprite, solid");
@@ -236,6 +237,12 @@ Crafty.c("human", {
             if (this.x + HUMAN_WIDTH >= STAGE_W) {
                 this._dir = -1;
             }
+
+            if (this._frozen) {
+                this.alpha = Crafty.math.randomNumber(0.1, 1);
+            } else {
+                this.alpha = 1;
+            }
         });
     },
 
@@ -243,32 +250,35 @@ Crafty.c("human", {
         // Check for shot
         // If underneath invader, canFire = true
         // If underneath bunker, canFire = false
-        var center = this.x + HUMAN_WIDTH/2;
-        var invaders = Crafty('invader');
-        var canFire = false;
-        for(var i = 0; i < invaders.length; i++) {
-            // Use a 200px wide ray to test if we're under an invader
-            if (Crafty(invaders[i]).intersect(center-100, 0, 200, STAGE_H)) {
-                canFire = true;
-                break;
-            }
-        }
-        var blocks = Crafty('block');
-        for(var i = 0; i < blocks.length; i++) {
-            // Use a narrow ray to test if we're under a block
-            if (Crafty(blocks[i]).intersect(center-BLOCK_WIDTH, 0, BLOCK_WIDTH*2, STAGE_H)) {
-                canFire = false;
-                break;
-            }
-        }
 
-        if (canFire) {
-            if (DEBUG) console.log("Fire missile");
-            Crafty.e("missile").attr({ x: this.x + HUMAN_WIDTH/2, y: this.y });
+        if (!this._frozen) {
+            var center = this.x + HUMAN_WIDTH/2;
+            var invaders = Crafty('invader');
+            var canFire = false;
+            for(var i = 0; i < invaders.length; i++) {
+                // Use a 200px wide ray to test if we're under an invader
+                if (Crafty(invaders[i]).intersect(center-100, 0, 200, STAGE_H)) {
+                    canFire = true;
+                    break;
+                }
+            }
+            var blocks = Crafty('block');
+            for(var i = 0; i < blocks.length; i++) {
+                // Use a narrow ray to test if we're under a block
+                if (Crafty(blocks[i]).intersect(center-BLOCK_WIDTH, 0, BLOCK_WIDTH*2, STAGE_H)) {
+                    canFire = false;
+                    break;
+                }
+            }
+
+            if (canFire) {
+                if (DEBUG) console.log("Fire missile");
+                Crafty.e("missile").attr({ x: this.x + HUMAN_WIDTH/2, y: this.y });
+            }
         }
 
         if (this._fastMode) {
-            this.delay(this.fire, this._shotRecharge/4);
+            this.delay(this.fire, this._shotRecharge/2);
         } else {
             this.delay(this.fire, this._shotRecharge);
         }
@@ -285,10 +295,19 @@ Crafty.c("human", {
             this._fastMode = true;
         }
 
+        if (this._frozen) {
+            this.y -= 5;
+        }
+        this._frozen = false;
+
         this.delay(this.changeDirection, Crafty.math.randomInt(1000,max_delay));
     },
 
     freeze: function() {
+        if (!this._frozen) {
+            this.y += 5;
+        }
+        this._frozen = true;
         this._dir = 0;
     }
 });
@@ -407,6 +426,17 @@ Crafty.c("blink", {
     }
 });
 
+Crafty.c("blink-fast", {
+    _n: 0,
+
+    init: function() {
+        this.bind("EnterFrame", function() {
+            this.alpha = Math.abs(Math.sin(this._n)) * 1.0;
+            this._n += 2 * Math.PI * T;
+        });
+    }
+});
+
 Crafty.c("crash", {
     _speed: -100, // pixels/s
     _gravity: 15, // pixels/s
@@ -447,7 +477,7 @@ Crafty.c("crash", {
 });
 
 Crafty.c("starfield", {
-    _stars: 100,
+    _stars: 150,
     _minSpeed: 10, // pixels/s
     _maxSpeed: 50, // pixels/s
     _maxSize: 3,
@@ -470,6 +500,8 @@ Crafty.c("starfield", {
         star.color('#ffffff');
         star.bind("EnterFrame", function() {
             this.y += this.attr('speed') * T;
+
+            // When star reaches edge, recycle it
             if (this.y > STAGE_H) {
                 this.x = Crafty.math.randomInt(1, STAGE_W);
                 this.y = -10;
