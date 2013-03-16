@@ -83,6 +83,8 @@ function invadersWin() {
 
     Crafty.e("explosion-human").attr({ x: human.x + HUMAN_WIDTH/2, y: human.y + HUMAN_HEIGHT/2 });
     human.destroy();
+
+    Crafty.scene("playing");
 }
 
 function humansWin() {
@@ -92,4 +94,6 @@ function humansWin() {
     var human = Crafty(Crafty("human")[0]);
 
     invaders.unbind("EnterFrame");
+
+    Crafty.scene("playing");
 }

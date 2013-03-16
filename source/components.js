@@ -21,11 +21,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 **/
 
-// TODO Sounds
-// TODO Music
 // TODO Menu
 // TODO Restart menu
 // TODO Starfield
+// TODO Speech bubbles
+// TODO Sounds
+// TODO Music
 
 Crafty.c("invader", {
     _startX: null,
@@ -120,7 +121,7 @@ Crafty.c("shield", {
         this.animate("activate", 0, 0, 3);
         this.animate("activate", 10, -1);
         this.attr({ w: INVADER_WIDTH, h: INVADER_HEIGHT });
-        this.tween({ alpha: 0.0 }, this._lifetime);
+        this.tween({ alpha: 0.2 }, this._lifetime);
 
         this.requires("Collision").collision([0,25], [50,25], [50,30], [0,30]);
         if (DEBUG) this.requires("WiredHitBox");
@@ -336,7 +337,7 @@ Crafty.c("missile", {
 
 Crafty.c("bomb", {
     _speed: 250,
-    _hp: 3,
+    _hp: 5,
 
     init: function() {
         this.requires("2D, Canvas, SpriteAnimation, bomb_sprite, solid");
@@ -348,14 +349,17 @@ Crafty.c("bomb", {
                 var other = hits[i].obj;
                 if (other.has("human")) {
                     Crafty.e("explosion-human").attr({ x: other.x + HUMAN_WIDTH/2, y: other.y });
+                    this.destroy();
                     other.freeze();
                 }
 
                 if (other.has("block")) {
-                    Crafty.e("explosion-block").attr({ x: this.x, y: this.y });
                     other.destroy();
                     this._hp--;
-                    if (this._hp <= 0) this.destroy();
+                    if (this._hp <= 0) {
+                        Crafty.e("explosion-block").attr({ x: this.x, y: this.y });
+                        this.destroy();
+                    }
                 }
 
                 if (other.has("missile")) {
@@ -375,6 +379,7 @@ Crafty.c("bomb", {
 
             if (this.y > STAGE_H) {
                 Crafty.e("explosion-bomb").attr({ x: this.x, y: this.y });
+
                 this.destroy();
             }
         });
@@ -411,17 +416,18 @@ Crafty.c("crash", {
 
         this.attr({ w: INVADER_WIDTH, h: INVADER_HEIGHT });
 
-        var sparks = Crafty.e("sparks").attr({ x: this.x + INVADER_WIDTH/2, y: this.y + INVADER_HEIGHT/2 });
-
+        var smoke = Crafty.e("smoke").attr({ x: this.x + INVADER_WIDTH/2, y: this.y + INVADER_HEIGHT/2 });
+        
         this.bind("EnterFrame", function() {
+            this.alpha = Crafty.math.randomNumber(0, 1);
             this._speed += this._gravity;
             this.y += this._speed * 1.0/Crafty.timer.getFPS();
             this.x += this._vx * 1.0/Crafty.timer.getFPS();
             this.origin(INVADER_WIDTH/2, INVADER_HEIGHT/2);
             this.rotation += this._vr * 1.0/Crafty.timer.getFPS();
 
-            sparks.x = this.x + INVADER_WIDTH/2;
-            sparks.y = this.y + INVADER_HEIGHT/2;
+            smoke.x = this.x + INVADER_WIDTH/2;
+            smoke.y = this.y + INVADER_HEIGHT/2;
 
             if (this.y > STAGE_W) {
                 this.destroy();
@@ -434,20 +440,21 @@ Crafty.c("explosion-invader", {
     init: function() {
         this.requires("Particles");
         this.particles({
-            maxParticles: 100,
+            maxParticles: 50,
             size: 2,
-            speed: 3,
-            lifeSpan: 50,
+            speed: 5,
+            lifeSpan: 20,
             angleRandom: 360,
             startColour: [100, 255, 0, 1],
-            endColour: [255, 255, 0, 0],
+            endColour:   [255, 255, 0, 0],
             sharpness: 20,
             fastMode: true,
-            spread: 10,
-            duration: 10,
+            spread: 0,
+            duration: 1,
             gravity: { x: 0, y: 0.1 },
             jitter: 0
         });
+        this._Particles.emissionRate = 1000;
 
         this.timeout(function() { this.destroy(); }, 1000);
     }
@@ -459,19 +466,20 @@ Crafty.c("explosion-bomb", {
         this.particles({
             maxParticles: 25,
             size: 2,
-            speed: 3,
-            lifeSpan: 10,
+            speed: 5,
+            lifeSpan: 50,
             angle: 0,
             angleRandom: 90,
-            startColour: [100, 255, 0, 1],
-            endColour: [255, 255, 0, 0],
+            startColour: [60, 120, 255, 1],
+            endColour: [0, 0, 0, 0],
             sharpness: 20,
             fastMode: true,
-            spread: 10,
-            duration: 10,
-            gravity: { x: 0, y: 0.1 },
+            spread: 0,
+            duration: 1,
+            gravity: { x: 0, y: 0.2 },
             jitter: 0
         });
+        this._Particles.emissionRate = 1000;
 
         this.timeout(function() { this.destroy(); }, 1000);
     }
@@ -481,21 +489,22 @@ Crafty.c("explosion-shield", {
     init: function() {
         this.requires("Particles");
         this.particles({
-            maxParticles: 50,
+            maxParticles: 25,
             size: 2,
-            speed: 0.2,
+            speed: 1,
             lifeSpan: 25,
             angle: 180,
-            angleRandom: 45,
+            angleRandom: 90,
             startColour: [255, 255, 255, 1],
-            endColour: [255, 255, 255, 0],
+            endColour: [0, 0, 0, 0],
             sharpness: 20,
             fastMode: true,
-            spread: 10,
-            duration: 10,
-            gravity: { x: 0, y: 0.1 },
+            spread: 5,
+            duration: 1,
+            gravity: { x: 0, y: 0.2 },
             jitter: 0
         });
+        this._Particles.emissionRate = 1000;
 
         this.timeout(function() { this.destroy(); }, 1000);
     }
@@ -504,10 +513,11 @@ Crafty.c("explosion-shield", {
 Crafty.c("explosion-human", {
     init: function() {
         this.requires("Particles");
+        this._Particles.emissionRate = 9999;
         this.particles({
-            maxParticles: 20,
+            maxParticles: 100,
             size: 2,
-            speed: 3,
+            speed: 5,
             lifeSpan: 50,
             angle: 0,
             angleRandom: 90,
@@ -516,11 +526,12 @@ Crafty.c("explosion-human", {
             endColour: [0, 0, 0, 0],
             sharpness: 20,
             fastMode: true,
-            spread: 10,
-            duration: 10,
+            spread: 0,
+            duration: 1,
             gravity: { x: 0, y: 0.2 },
             jitter: 0
         });
+        this._Particles.emissionRate = 1000;
 
         this.timeout(function() { this.destroy(); }, 1000);
     }
@@ -535,39 +546,41 @@ Crafty.c("explosion-block", {
             speed: 3,
             lifeSpan: 25,
             angle: 0,
-            angleRandom: 360,
+            angleRandom: 90,
             startColour: [255, 0, 0, 1],
             endColour: [255, 0, 0, 0],
             sharpness: 20,
             fastMode: true,
-            spread: 10,
-            duration: 10,
+            spread: 0,
+            duration: 1,
             gravity: { x: 0, y: 0.2 },
             jitter: 0
         });
+        this._Particles.emissionRate = 1000;
 
         this.timeout(function() { this.destroy(); }, 1000);
     }
 });
 
-Crafty.c("sparks", {
+Crafty.c("smoke", {
     init: function() {
         this.requires("Particles");
         this.particles({
-            maxParticles: 100,
+            maxParticles: 200,
             size: 1,
-            speed: 0.2,
-            lifeSpan: 200,
-            angle: 180,
+            sizeRandom: 5,
+            speed: 0,
+            lifeSpan: 25,
+            angle: 0,
             angleRandom: 45,
-            startColour:       [255, 0, 0, 1],
-            startColourRandom: [255, 255, 0, 1],
+            startColour:       [120, 120, 180, 0.7],
+            startColourRandom: [000, 000, 000, 0.7],
             endColour: [255, 255, 255, 0],
             sharpness: 20,
             fastMode: true,
-            spread: 10,
-            duration: 200,
-            gravity: { x: 0, y: 0.1 },
+            spread: 5,
+            duration: -1,
+            gravity: { x: 0, y: -0.025 },
             jitter: 0
         });
 
