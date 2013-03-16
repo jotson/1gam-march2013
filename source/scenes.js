@@ -120,6 +120,14 @@ Crafty.scene("playing",
 
             // Start shooting!
             h.fire();
+
+            // Ship counter
+            var ships = Crafty.e("2D, DOM, Text");
+            ships.attr({ w: STAGE_W, x: 0, y: 5 });
+            ships.css({ 'color': '#ff0000', 'font-size': '20px', 'text-align': 'center', 'font-family': FONTFACE });
+            ships.bind("EnterFrame", function() {
+                ships.text("Ships remaining: " + Crafty("invader").length);
+            });
         }, 4700);
 
         // Show stats

@@ -30,4 +30,5 @@ Move the mouse pointer over ships to activate their shields. Try to block incomi
 - Using a mixture of Canvas and DOM. They each have strengths and weaknesses. For example, switching the starfield, missiles, and bombs to DOM improved the performance of the entire simulation. But the invaders are Canvas because it makes their movement smoother.
 - DOM and Canvas entities appear to have separate z-orders. And DOM entities are always on top of Canvas entities.
 - All entities with 2D are automatically destroyed when the scene changes. Entities without 2D are not.
+- Having an AI component that can "play" your game can make testing easier.
 - Set DEBUG = true in global.js to see collision hitboxes and console logging.
