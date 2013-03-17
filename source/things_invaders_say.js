@@ -64,4 +64,6 @@ var THINGS_INVADERS_SAY = [
     "My God, it's full of stars!",
     "It's a slaughter!",
     "My leg!",
+    "Why are we flying in this zigzag pattern?!",
+    "Does this thing go any faster?!",
 ];

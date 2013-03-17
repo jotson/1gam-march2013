@@ -23,10 +23,9 @@ SOFTWARE.
 
 // TODO Menu
 // TODO Restart menu
-// TODO Starfield
 // TODO Speech bubbles
-// TODO Sounds
 // TODO Music
+// TODO Could be a performance glitch caused by the raycasting
 
 Crafty.c("invader", {
     _startX: null,
@@ -280,11 +279,14 @@ Crafty.c("human", {
         if (!this.visible) return;
 
         if (!this._frozen) {
-            var center = this.x + HUMAN_WIDTH/2;
-            var invaders = Crafty('invader');
             var canFire = false;
+            var center = this.x + HUMAN_WIDTH/2;
+
+            var invaders = Crafty('invader');
             for(var i = 0; i < invaders.length; i++) {
                 // Use a 200px wide ray to test if we're under an invader
+                if (!Crafty(invaders[i].visible)) continue;
+                
                 if (Crafty(invaders[i]).intersect(center-100, 0, 200, STAGE_H)) {
                     canFire = true;
                     break;
@@ -293,6 +295,10 @@ Crafty.c("human", {
             var blocks = Crafty('block');
             for(var i = 0; i < blocks.length; i++) {
                 // Use a narrow ray to test if we're under a block
+                // Only test a sample of all of the blocks
+                if (Crafty.math.randomInt(1,5) != 1) continue;
+                if (!Crafty(blocks[i]).visible) continue;
+
                 if (Crafty(blocks[i]).intersect(center-BLOCK_WIDTH, 0, BLOCK_WIDTH*2, STAGE_H)) {
                     canFire = false;
                     break;
