@@ -137,7 +137,7 @@ Crafty.scene("playing",
         for (y = 0; y < INVADER_ROWS; y++) {
             for (x = 0; x < INVADER_COLS; x++) {
                 group.attach(
-                    Crafty.e('invader_sprite' + y + ', invader')
+                    ObjectPool.get('invader_sprite' + y + ', invader')
                         .attr({ x: xOffset + x * INVADER_WIDTH, y: yOffset + y * INVADER_HEIGHT })
                         .fly(Crafty.math.randomInt(50,75))
                 );

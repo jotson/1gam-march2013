@@ -85,7 +85,7 @@ function invadersWin() {
     invaders.unbind("EnterFrame");
 
     Crafty.e("explosion-human").attr({ x: human.x + HUMAN_WIDTH/2, y: human.y + HUMAN_HEIGHT/2 });
-    human.destroy();
+    Factory.recycle(human);
 
     Crafty.scene("playing");
 }
@@ -148,5 +148,45 @@ var SoundManager = {
         this.sounds[id].n = (n+1) % this.CHANNELS;
 
         Crafty.audio.play(name + "-" + n, repeat, volume);
+    }
+}
+
+var ObjectPool = {
+    /**
+     * Get a cached entity or create a new one
+     * @param  string component Component string (e.g. "player")
+     * @return entity
+     */
+    get: function(component) {
+        var objects = Crafty(component);
+        for(var i = 0; i < objects.length; i++) {
+            var e = Crafty(objects[i]);
+            if (typeof(e.has) == 'function' && !e.visible) {
+                if (e.has(component)) {
+                    e.visible = true;
+                    e.active = true;
+                    if (typeof(e.revive) == 'function') {
+                        e.revive();
+                    }
+                    return e;
+                }
+            }
+        }
+
+        console.log("Creating new " + component);
+        var e = Crafty.e(component);
+        e.setName(component);
+        e.visible = true;
+        e.active = true;
+        return e;
+    },
+
+    /**
+     * Recycle
+     * @param  entity o Entity
+     */
+    recycle: function(e) {
+        e.visible = false;
+        e.active = false;
     }
 }
