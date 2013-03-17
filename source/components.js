@@ -130,7 +130,7 @@ Crafty.c("shield", {
 
         this.bind("TweenEnd", function(property) {
             if (DEBUG) console.log("Shield deactivated");
-            this.detach(this._parent);
+            this._parent.detach(this);
             this.destroy();
         });
     }
