@@ -127,6 +127,18 @@ Crafty.scene("playing",
         // Create starfield
         Crafty.e("starfield");
 
+        // Create bunkers
+        createBunker(125, 400);
+        createBunker(350, 400);
+        createBunker(575, 400);
+        // createBunker(275, 400);
+        // createBunker(425, 400);
+        // createBunker(200, 400);
+        // createBunker(500, 400);
+
+        // Add human to stage
+        var h = Crafty.e("human");
+
         // Create invaders
         var yOffset = 50;
         var xOffset = 25;
@@ -143,15 +155,6 @@ Crafty.scene("playing",
                 );
             }
         }
-
-        // Create bunkers
-        createBunker(125, 400);
-        createBunker(275, 400);
-        createBunker(425, 400);
-        createBunker(575, 400);
-
-        // Add human to stage
-        var h = Crafty.e("human");
 
         // Ready?
         var msg = Crafty.e("2D, DOM, Text, Delay, Tween, blink");

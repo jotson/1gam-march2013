@@ -85,7 +85,7 @@ function invadersWin() {
     invaders.unbind("EnterFrame");
 
     Crafty.e("explosion-human").attr({ x: human.x + HUMAN_WIDTH/2, y: human.y + HUMAN_HEIGHT/2 });
-    Factory.recycle(human);
+    ObjectPool.recycle(human);
 
     Crafty.scene("playing");
 }
@@ -161,15 +161,13 @@ var ObjectPool = {
         var objects = Crafty(component);
         for(var i = 0; i < objects.length; i++) {
             var e = Crafty(objects[i]);
-            if (typeof(e.has) == 'function' && !e.visible) {
-                if (e.has(component)) {
-                    e.visible = true;
-                    e.active = true;
-                    if (typeof(e.revive) == 'function') {
-                        e.revive();
-                    }
-                    return e;
+            if (!e.visible) {
+                e.visible = true;
+                e.active = true;
+                if (typeof(e.revive) == 'function') {
+                    e.revive();
                 }
+                return e;
             }
         }
 

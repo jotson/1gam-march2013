@@ -31,4 +31,5 @@ Move the mouse pointer over ships to activate their shields. Try to block incomi
 - DOM and Canvas entities appear to have separate z-orders. And DOM entities are always on top of Canvas entities.
 - All entities with 2D are automatically destroyed when the scene changes. Entities without 2D are not.
 - Having an AI component that can "play" your game can make testing easier.
+- Chrome performance > Firefox performance
 - Set DEBUG = true in global.js to see collision hitboxes and console logging.
