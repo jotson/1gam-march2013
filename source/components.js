@@ -103,11 +103,13 @@ Crafty.c("invader", {
     },
 
     bomb: function() {
+        this.timeout(this.bomb, 1000);
+
+        if (Crafty.isPaused()) return;
+
         if (Crafty.math.randomInt(1,50) == 1) {
             Crafty.e("bomb").attr({ x: this.x + INVADER_WIDTH/2, y: this.y + INVADER_HEIGHT });
         }
-
-        this.timeout(this.bomb, 1000);
     }
 });
 
@@ -322,6 +324,8 @@ Crafty.c("missile", {
         this.attr({ w: 2, h: 4 });
         this.color('#ff0000');
 
+        SoundManager.play("missile", 1, 0.7);
+
         this.requires("Collision").collision();
 
         this.onHit("solid", function(hits) {
@@ -529,6 +533,8 @@ Crafty.c("explosion-invader", {
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
+        SoundManager.play("explosion1");
+        if (Crafty.math.randomInt(1,5) == 1) SoundManager.play("crash");
 
         this.timeout(function() { this.destroy(); }, 1000);
     }
@@ -554,6 +560,7 @@ Crafty.c("explosion-bomb", {
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
+        SoundManager.play("explosion1");
 
         this.timeout(function() { this.destroy(); }, 1000);
     }
@@ -579,6 +586,7 @@ Crafty.c("explosion-shield", {
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
+        SoundManager.play("ricochet");
 
         this.timeout(function() { this.destroy(); }, 1000);
     }
@@ -606,6 +614,7 @@ Crafty.c("explosion-human", {
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
+        SoundManager.play("explosion1");
 
         this.timeout(function() { this.destroy(); }, 1000);
     }
@@ -631,6 +640,7 @@ Crafty.c("explosion-block", {
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
+        SoundManager.play("explosion2");
 
         this.timeout(function() { this.destroy(); }, 1000);
     }

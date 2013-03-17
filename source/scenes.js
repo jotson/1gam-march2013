@@ -28,7 +28,44 @@ Crafty.scene("loading",
         status.attr({ w: STAGE_W, h: 50, x: 0, y: STAGE_H*0.3 });
         status.text("Loading");
 
+        // Sprites
+        Crafty.sprite(50, "assets/images/invaders.png", {
+            invader_sprite0: [0,1],
+            invader_sprite1: [0,0],
+            invader_sprite2: [0,0],
+            invader_sprite3: [0,2],
+            invader_sprite4: [0,2],
+        });
+
+        Crafty.sprite(50, "assets/images/shield.png", {
+            shield_sprite: [0,0],
+        });
+
+        Crafty.sprite(50, "assets/images/human.png", {
+            human_sprite: [0,0],
+        });
+
+        // Sounds
+        SoundManager.add({
+            missile: ["assets/sounds/railgun.ogg", "assets/sounds/railgun.mp3"],
+            war: ["assets/sounds/war-sounds.ogg", "assets/sounds/war-sounds.mp3"],
+            artillery: ["assets/sounds/artillery.ogg", "assets/sounds/artillery.mp3"],
+            explosion1: ["assets/sounds/explosion1.ogg", "assets/sounds/explosion1.mp3"],
+            explosion2: ["assets/sounds/explosion2.ogg", "assets/sounds/explosion2.mp3"],
+            crash: ["assets/sounds/crash.ogg", "assets/sounds/crash.mp3"],
+        });
+
+        // Ricochet variations
+        SoundManager.add({ ricochet: ["assets/sounds/ricochet1.ogg", "assets/sounds/ricochet1.mp3"] });
+        SoundManager.add({ ricochet: ["assets/sounds/ricochet2.ogg", "assets/sounds/ricochet2.mp3"] });
+        SoundManager.add({ ricochet: ["assets/sounds/ricochet3.ogg", "assets/sounds/ricochet3.mp3"] });
+        SoundManager.add({ ricochet: ["assets/sounds/ricochet4.ogg", "assets/sounds/ricochet4.mp3"] });
+
         if (DEBUG) console.log("Loading assets");
+        if (DEBUG) console.log("Support audio: " + Crafty.support.audio);
+        if (DEBUG) console.log("Support mp3: " + Crafty.audio.supported['mp3']);
+        if (DEBUG) console.log("Support ogg: " + Crafty.audio.supported['ogg']);
+        if (DEBUG) console.log("Support wav: " + Crafty.audio.supported['wav']);
 
         // Preload assets
         Crafty.load(
@@ -36,34 +73,40 @@ Crafty.scene("loading",
                 "assets/images/invaders.png",
                 "assets/images/shield.png",
                 "assets/images/human.png",
+                "assets/sounds/railgun.ogg",
+                "assets/sounds/railgun.mp3",
+                "assets/sounds/war-sounds.ogg",
+                "assets/sounds/war-sounds.mp3",
+                "assets/sounds/artillery.mp3",
+                "assets/sounds/artillery.ogg",
+                "assets/sounds/explosion1.mp3",
+                "assets/sounds/explosion1.ogg",
+                "assets/sounds/explosion2.mp3",
+                "assets/sounds/explosion2.ogg",
+                "assets/sounds/crash.mp3",
+                "assets/sounds/crash.ogg",
             ],
 
             function() {
                 // onLoad
                 if (DEBUG) console.log("Loading complete");
 
-                Crafty.sprite(50, "assets/images/invaders.png", {
-                    invader_sprite0: [0,1],
-                    invader_sprite1: [0,0],
-                    invader_sprite2: [0,0],
-                    invader_sprite3: [0,2],
-                    invader_sprite4: [0,2],
-                });
-
-                Crafty.sprite(50, "assets/images/shield.png", {
-                    shield_sprite: [0,0],
-                });
-
-                Crafty.sprite(50, "assets/images/human.png", {
-                    human_sprite: [0,0],
-                });
+                // Start ambient sounds
+                SoundManager.play("war", -1, 0.4);
+                SoundManager.play("artillery", -1, 1);
 
                 Crafty.scene("menu");
             },
 
             function(e) {
                 // onProgress
-                status.text("Loading " + e.percent);
+                if (DEBUG) console.log(e);
+                status.text("Loading " + Math.ceil(e.percent) + '%');
+            },
+
+            function(e) {
+                // onError
+                if (DEBUG) console.log(e);
             }
         );
     }

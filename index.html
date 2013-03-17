@@ -37,10 +37,12 @@
 
         $(window).focus(function() {
             if (Crafty.isPaused()) Crafty.pause();
+            Crafty.audio.unmute();
         });
 
         $(window).blur(function() {
             if (!Crafty.isPaused()) Crafty.pause();
+            Crafty.audio.mute();
         });
     </script>
 

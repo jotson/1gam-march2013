@@ -111,14 +111,23 @@ var SoundManager = {
     sounds: {},
 
     /**
-     * Add a sound
+     * Add a sound to be played
+     * If you add multiple sounds with the same id, they will be added as variations and will be played randomly by play()
      * @param Object obj  Add a sound with an object like: { sound1: ['sound.mp3', 'sound.ogg', 'sound.wav'], sound2: ... }
      */
     add: function(obj) {
         for (var id in obj) {
-            this.sounds[id] = 0;
+            var v;
+            if (this.sounds[id] == undefined) {
+                this.sounds[id] = { n: 0, variations: 1 };
+                v = 1;
+            } else {
+                this.sounds[id].variations++;
+                v = this.sounds[id].variations;
+            }
+            name = id + "" + v;
             for(i = 0; i < this.CHANNELS; i++) {
-                Crafty.audio.add(id + "-" + i, obj[id]);
+                Crafty.audio.add(name + "-" + i, obj[id]);
             }
         }
     },
@@ -127,11 +136,17 @@ var SoundManager = {
      * Play a sound using each channel consecutively
      * @param  string id  Play a sound using the id from add()
      */
-    play: function(id) {
-        var n = this.sounds[id];
+    play: function(id, repeat, volume) {
+        var s = this.sounds[id];
 
-        this.sounds[id] = (n+1) % this.CHANNELS;
+        if (s == undefined) return;
 
-        Crafty.audio.play(id + "-" + n);
+        var n = s.n;
+        var v = s.variations;
+        var name = id + "" + Crafty.math.randomInt(1,v);
+
+        this.sounds[id].n = (n+1) % this.CHANNELS;
+
+        Crafty.audio.play(name + "-" + n, repeat, volume);
     }
 }
