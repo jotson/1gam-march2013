@@ -178,7 +178,7 @@ Crafty.scene("playing",
         stats.attr({ w: STAGE_W-10, x: 5, y: 5 });
         stats.css({ 'color': '#444444', 'font-size': '12px', 'text-align': 'right', 'font-family': FONTFACE });
         stats.bind("EnterFrame", function() {
-            stats.text("FPS: " + Crafty.timer.getFPS() + " — Entities: " + Crafty('*').length);
+            stats.text("Entities: " + Crafty('*').length);
         });
     }
 );

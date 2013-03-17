@@ -1,0 +1,11 @@
+#!/bin/sh
+
+SOUNDS=assets/sounds
+
+# Build ogg files
+echo "Building .ogg files..."
+for f in $SOUNDS/*.mp3
+do
+    file=`basename $f .mp3`
+    avconv -i $SOUNDS/$file.mp3 -codec libvorbis -y -v error $SOUNDS/$file.ogg
+done

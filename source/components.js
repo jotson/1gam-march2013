@@ -207,7 +207,7 @@ Crafty.c("invader-group", {
 
 Crafty.c("block", {
     init: function() {
-        this.requires("2D, DOM, Color, solid");
+        this.requires("2D, Canvas, Color, solid");
         this.attr({ w: BLOCK_WIDTH, h: BLOCK_HEIGHT, z: 100 });
         this.color("#ff0000");
 
@@ -225,7 +225,7 @@ Crafty.c("human", {
     _frozen: false,
 
     init: function() {
-        this.requires("2D, DOM, SpriteAnimation, Delay, human_sprite, solid");
+        this.requires("2D, Canvas, SpriteAnimation, Delay, human_sprite, solid");
         this.attr({ w: HUMAN_WIDTH, h: HUMAN_HEIGHT, x: STAGE_W/2 - HUMAN_WIDTH/2, y: 475, z: 10 });
         this.changeDirection();
 
@@ -320,7 +320,7 @@ Crafty.c("missile", {
     _acceleration: 50, // pixels/s/s
     
     init: function() {
-        this.requires("2D, DOM, SpriteAnimation, Color, missile_sprite, solid");
+        this.requires("2D, Canvas, SpriteAnimation, Color, missile_sprite, solid");
         this.attr({ w: 2, h: 4 });
         this.color('#ff0000');
 
@@ -373,7 +373,7 @@ Crafty.c("bomb", {
     _hp: 5,
 
     init: function() {
-        this.requires("2D, DOM, SpriteAnimation, bomb_sprite, solid");
+        this.requires("2D, Canvas, SpriteAnimation, bomb_sprite, solid");
         this.attr({ w: 8, h: 8, z: -1 });
 
         this.requires("Collision").collision();
@@ -499,7 +499,7 @@ Crafty.c("starfield", {
         var alpha = speed / this._maxSpeed * 0.9;
         var size = Math.ceil(speed / this._maxSpeed * this._maxSize);
 
-        var star = Crafty.e("2D, DOM, Color")
+        var star = Crafty.e("2D, Canvas, Color")
         star.attr({ x: x, y: y, z: 0, w: size, h: size, alpha: alpha, speed: speed });
         star.color('#ffffff');
         star.bind("EnterFrame", function() {
