@@ -219,7 +219,7 @@ Crafty.c("block", {
 
 Crafty.c("human", {
     _dir: -1,
-    _speed: 200, // pixels/s
+    _speed: 150, // pixels/s
     _shotRecharge: 200, // milliseconds
     _fastMode: false,
     _frozen: false,
@@ -293,7 +293,7 @@ Crafty.c("human", {
 
         this._dir = Crafty.math.randomInt(-1,1);
         if (this._dir == 0) {
-            max_delay = 2000;
+            max_delay = 500;
             this._fastMode = true;
         }
 
