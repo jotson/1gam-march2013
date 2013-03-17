@@ -344,7 +344,7 @@ Crafty.c("missile", {
             for(var i = 0; i < hits.length; i++) {
                 var other = hits[i].obj;
                 if (other.has("invader") && other.visible) {
-                    ObjectPool.get("explosion-invader").attr({ x: other.x + other.attr('w')/2, y: other.y + other.attr('h')/2 });
+                    Crafty.e("explosion-invader").attr({ x: other.x + other.attr('w')/2, y: other.y + other.attr('h')/2 });
                     other.addComponent("crash");
                     other.removeComponent("invader");
                     other.attr({ z: 0 });
@@ -354,11 +354,11 @@ Crafty.c("missile", {
                     Crafty(invaders[0]).findEdges();
                 }
                 if (other.has("shield") && other.visible) {
-                    ObjectPool.get("explosion-shield").attr({ x: this.x, y: this.y });
+                    Crafty.e("explosion-shield").attr({ x: this.x, y: this.y });
                     ObjectPool.recycle(this);
                 }
                 if (other.has("block") && other.visible) {
-                    ObjectPool.get("explosion-block").attr({ x: this.x, y: this.y });
+                    Crafty.e("explosion-block").attr({ x: this.x, y: this.y });
                     ObjectPool.recycle(this);
                     ObjectPool.recycle(other);
                 }
@@ -374,7 +374,7 @@ Crafty.c("missile", {
             this.y -= this._speed * T;
 
             if (this.y <= 0) {
-                ObjectPool.get("explosion-shield").attr({ x: this.x, y: this.y });
+                Crafty.e("explosion-shield").attr({ x: this.x, y: this.y });
                 ObjectPool.recycle(this);
             }
         });
@@ -400,7 +400,7 @@ Crafty.c("bomb", {
             for(var i = 0; i < hits.length; i++) {
                 var other = hits[i].obj;
                 if (other.has("human")) {
-                    ObjectPool.get("explosion-human").attr({ x: other.x + HUMAN_WIDTH/2, y: other.y });
+                    Crafty.e("explosion-human").attr({ x: other.x + HUMAN_WIDTH/2, y: other.y });
                     ObjectPool.recycle(this);
                     other.freeze();
                 }
@@ -409,13 +409,13 @@ Crafty.c("bomb", {
                     ObjectPool.recycle(other);
                     this._hp--;
                     if (this._hp <= 0) {
-                        ObjectPool.get("explosion-block").attr({ x: this.x, y: this.y });
+                        Crafty.e("explosion-block").attr({ x: this.x, y: this.y });
                         ObjectPool.recycle(this);
                     }
                 }
 
                 if (other.has("missile")) {
-                    ObjectPool.get("explosion-block").attr({ x: this.x, y: this.y });
+                    Crafty.e("explosion-block").attr({ x: this.x, y: this.y });
                     ObjectPool.recycle(other);
                     this._hp--;
                     if (this._hp <= 0) ObjectPool.recycle(this);
@@ -432,7 +432,7 @@ Crafty.c("bomb", {
             this.y += this._speed * T;
 
             if (this.y > STAGE_H) {
-                ObjectPool.get("explosion-bomb").attr({ x: this.x, y: this.y });
+                Crafty.e("explosion-bomb").attr({ x: this.x, y: this.y });
 
                 ObjectPool.recycle(this);
             }
@@ -481,7 +481,7 @@ Crafty.c("crash", {
 
         this.attr({ w: INVADER_WIDTH, h: INVADER_HEIGHT });
 
-        var smoke = ObjectPool.get("smoke").attr({ x: this.x + INVADER_WIDTH/2, y: this.y + INVADER_HEIGHT/2 });
+        var smoke = Crafty.e("smoke").attr({ x: this.x + INVADER_WIDTH/2, y: this.y + INVADER_HEIGHT/2 });
         
         this.bind("EnterFrame", function() {
             if (!this.visible) return;
@@ -558,7 +558,7 @@ Crafty.c("explosion-invader", {
         this._Particles.emissionRate = 1000;
         this.revive();
 
-        this.timeout(function() { ObjectPool.recycle(this); }, 1000);
+        this.timeout(function() { this.destroy(); }, 1000);
     },
 
     revive: function() {
@@ -591,7 +591,7 @@ Crafty.c("explosion-bomb", {
         this._Particles.emissionRate = 1000;
         this.revive();
 
-        this.timeout(function() { ObjectPool.recycle(this); }, 1000);
+        this.timeout(function() { this.destroy(); }, 1000);
     },
 
     revive: function() {
@@ -623,7 +623,7 @@ Crafty.c("explosion-shield", {
         this._Particles.emissionRate = 1000;
         this.revive();
 
-        this.timeout(function() { ObjectPool.recycle(this); }, 1000);
+        this.timeout(function() { this.destroy(); }, 1000);
     },
 
     revive: function() {
@@ -657,7 +657,7 @@ Crafty.c("explosion-human", {
         this._Particles.emissionRate = 1000;
         this.revive();
 
-        this.timeout(function() { ObjectPool.recycle(this); }, 1000);
+        this.timeout(function() { this.destroy(); }, 1000);
     },
 
     revive: function() {
@@ -689,7 +689,7 @@ Crafty.c("explosion-block", {
         this._Particles.emissionRate = 1000;
         this.revive();
 
-        this.timeout(function() { ObjectPool.recycle(this); }, 1000);
+        this.timeout(function() { this.destroy(); }, 1000);
     },
 
     revive: function() {
@@ -721,7 +721,7 @@ Crafty.c("smoke", {
             jitter: 0
         });
 
-        this.timeout(function() { ObjectPool.recycle(this); }, 3000);
+        this.timeout(function() { this.destroy(); }, 3000);
     },
 
     revive: function() {

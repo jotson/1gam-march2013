@@ -173,7 +173,7 @@ var ObjectPool = {
             }
         }
 
-        console.log("Creating new " + component);
+        if (DEBUG) console.log("Creating new " + component);
         var e = Crafty.e(component);
         e.setName(component);
         e.visible = true;
