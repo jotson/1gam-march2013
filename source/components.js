@@ -518,7 +518,7 @@ Crafty.c("explosion-invader", {
     init: function() {
         this.requires("2D, Particles");
         this.particles({
-            maxParticles: 50,
+            maxParticles: 25,
             size: 2,
             speed: 250 * T,
             lifeSpan: 0.5 * FPS,
@@ -597,7 +597,7 @@ Crafty.c("explosion-human", {
         this.requires("2D, Particles");
         this._Particles.emissionRate = 9999;
         this.particles({
-            maxParticles: 100,
+            maxParticles: 50,
             size: 2,
             speed: 250 * T,
             lifeSpan: 1 * FPS,
@@ -650,7 +650,7 @@ Crafty.c("smoke", {
     init: function() {
         this.requires("2D, Particles");
         this.particles({
-            maxParticles: 200,
+            maxParticles: 50,
             size: 1,
             sizeRandom: 5,
             speed: 0,
