@@ -41,12 +41,14 @@ Crafty.c("invader", {
         this.requires("Collision").collision([10,10], [40,10], [45,38], [5,38]);
         if (DEBUG) this.requires("WiredHitBox");
         this.onHit("solid", function(hits) {
+            if (!this.visible) return;
+
             if (!this.has("invader")) return;
 
             for(var i = 0; i < hits.length; i++) {
                 var other = hits[i].obj;
                 if (other.has("block")) {
-                    other.destroy();
+                    ObjectPool.recycle(other);
                 }
 
                 if (other.has("human")) {
@@ -56,12 +58,15 @@ Crafty.c("invader", {
         });
 
         this.bind("EnterFrame", function() {
+            if (!this.visible) return;
         });
 
         this.bind("MouseMove", function(e) {
+            if (!this.visible) return;
+
             // Activate shield if we don't already have one
             if (!this.hasShield()) {
-                this.attach(Crafty.e("shield").attr({ x: this.x, y: this.y + 25 }));
+                this.attach(ObjectPool.get("shield").attr({ x: this.x, y: this.y + 25 }));
             }
         });
     },
@@ -72,7 +77,7 @@ Crafty.c("invader", {
                 var c = this._children[i];
 
                 // Need typeof() because Collision adds a Polygon child that doesn't have has()
-                if (typeof(c.has) != 'undefined' && c.has("shield")) {
+                if (typeof(c.has) != 'undefined' && c.has("shield") && c.visible) {
                     return true;
                 }
             }
@@ -108,7 +113,7 @@ Crafty.c("invader", {
         if (Crafty.isPaused()) return;
 
         if (Crafty.math.randomInt(1,50) == 1) {
-            Crafty.e("bomb").attr({ x: this.x + INVADER_WIDTH/2, y: this.y + INVADER_HEIGHT });
+            ObjectPool.get("bomb").attr({ x: this.x + INVADER_WIDTH/2, y: this.y + INVADER_HEIGHT });
         }
     }
 });
@@ -123,7 +128,8 @@ Crafty.c("shield", {
         this.animate("activate", 0, 0, 3);
         this.animate("activate", 10, -1);
         this.attr({ w: INVADER_WIDTH, h: INVADER_HEIGHT });
-        this.tween({ alpha: 0.2 }, this._lifetime);
+
+        this.revive();
 
         this.requires("Collision").collision([0,25], [50,25], [50,30], [0,30]);
         if (DEBUG) this.requires("WiredHitBox");
@@ -131,8 +137,13 @@ Crafty.c("shield", {
         this.bind("TweenEnd", function(property) {
             if (DEBUG) console.log("Shield deactivated");
             this._parent.detach(this);
-            this.destroy();
+            ObjectPool.recycle(this);
         });
+    },
+
+    revive: function() {
+        this.alpha = 1;
+        this.tween({ alpha: 0.2 }, this._lifetime);
     }
 });
 
@@ -210,10 +221,6 @@ Crafty.c("block", {
         this.requires("2D, Canvas, Color, solid");
         this.attr({ w: BLOCK_WIDTH, h: BLOCK_HEIGHT, z: 100 });
         this.color("#ff0000");
-
-        this.bind("EnterFrame", function() {
-            
-        });
     }
 });
 
@@ -230,6 +237,8 @@ Crafty.c("human", {
         this.changeDirection();
 
         this.bind("EnterFrame", function() {
+            if (!this.visible) return;
+
             this.x += this._dir * this._speed * T;
 
             if (this.x <= 0) {
@@ -252,6 +261,13 @@ Crafty.c("human", {
         // Check for shot
         // If underneath invader, canFire = true
         // If underneath bunker, canFire = false
+        if (this._fastMode) {
+            this.delay(this.fire, this._shotRecharge/2);
+        } else {
+            this.delay(this.fire, this._shotRecharge);
+        }
+
+        if (!this.visible) return;
 
         if (!this._frozen) {
             var center = this.x + HUMAN_WIDTH/2;
@@ -275,14 +291,8 @@ Crafty.c("human", {
 
             if (canFire) {
                 if (DEBUG) console.log("Fire missile");
-                Crafty.e("missile").attr({ x: this.x + HUMAN_WIDTH/2, y: this.y });
+                ObjectPool.get("missile").attr({ x: this.x + HUMAN_WIDTH/2, y: this.y });
             }
-        }
-
-        if (this._fastMode) {
-            this.delay(this.fire, this._shotRecharge/2);
-        } else {
-            this.delay(this.fire, this._shotRecharge);
         }
     },
 
@@ -324,47 +334,54 @@ Crafty.c("missile", {
         this.attr({ w: 2, h: 4 });
         this.color('#ff0000');
 
-        SoundManager.play("missile", 1, 0.7);
+        this.revive();
 
         this.requires("Collision").collision();
 
         this.onHit("solid", function(hits) {
+            if (!this.visible) return;
+
             for(var i = 0; i < hits.length; i++) {
                 var other = hits[i].obj;
-                if (other.has("invader")) {
+                if (other.has("invader") && other.visible) {
                     Crafty.e("explosion-invader").attr({ x: other.x + other.attr('w')/2, y: other.y + other.attr('h')/2 });
-                    // other.destroy();
                     other.addComponent("crash");
                     other.removeComponent("invader");
                     other.attr({ z: 0 });
-                    this.destroy();
+                    ObjectPool.recycle(this);
 
                     var invaders = Crafty('invader-group');
                     Crafty(invaders[0]).findEdges();
                 }
-                if (other.has("shield")) {
+                if (other.has("shield") && other.visible) {
                     Crafty.e("explosion-shield").attr({ x: this.x, y: this.y });
-                    this.destroy();
+                    ObjectPool.recycle(this);
                 }
-                if (other.has("block")) {
+                if (other.has("block") && other.visible) {
                     Crafty.e("explosion-block").attr({ x: this.x, y: this.y });
-                    this.destroy();
-                    other.destroy();
+                    ObjectPool.recycle(this);
+                    ObjectPool.recycle(other);
                 }
 
             }
         });
 
         this.bind("EnterFrame", function() {
+            if (!this.visible) return;
+
             this._speed += this._acceleration * T;
             if (this._speed > this._max_speed) this._speed = this._max_speed;
             this.y -= this._speed * T;
 
             if (this.y <= 0) {
                 Crafty.e("explosion-shield").attr({ x: this.x, y: this.y });
-                this.destroy();
+                ObjectPool.recycle(this);
             }
         });
+    },
+
+    revive: function() {
+        SoundManager.play("missile", 1, 0.7);
     }
 });
 
@@ -378,28 +395,30 @@ Crafty.c("bomb", {
 
         this.requires("Collision").collision();
         this.onHit("solid", function(hits) {
+            if (!this.visible) return;
+
             for(var i = 0; i < hits.length; i++) {
                 var other = hits[i].obj;
                 if (other.has("human")) {
                     Crafty.e("explosion-human").attr({ x: other.x + HUMAN_WIDTH/2, y: other.y });
-                    this.destroy();
+                    ObjectPool.recycle(this);
                     other.freeze();
                 }
 
                 if (other.has("block")) {
-                    other.destroy();
+                    ObjectPool.recycle(other);
                     this._hp--;
                     if (this._hp <= 0) {
                         Crafty.e("explosion-block").attr({ x: this.x, y: this.y });
-                        this.destroy();
+                        ObjectPool.recycle(this);
                     }
                 }
 
                 if (other.has("missile")) {
                     Crafty.e("explosion-block").attr({ x: this.x, y: this.y });
-                    other.destroy();
+                    ObjectPool.recycle(other);
                     this._hp--;
-                    if (this._hp <= 0) this.destroy();
+                    if (this._hp <= 0) ObjectPool.recycle(this);
                 }
 
             }
@@ -408,12 +427,14 @@ Crafty.c("bomb", {
         this.requires("Color").color('#3399ff');
 
         this.bind("EnterFrame", function() {
+            if (!this.visible) return;
+
             this.y += this._speed * T;
 
             if (this.y > STAGE_H) {
                 Crafty.e("explosion-bomb").attr({ x: this.x, y: this.y });
 
-                this.destroy();
+                ObjectPool.recycle(this);
             }
         });
     }
@@ -463,6 +484,8 @@ Crafty.c("crash", {
         var smoke = Crafty.e("smoke").attr({ x: this.x + INVADER_WIDTH/2, y: this.y + INVADER_HEIGHT/2 });
         
         this.bind("EnterFrame", function() {
+            if (!this.visible) return;
+
             this.alpha = Crafty.math.randomNumber(0, 1);
             this._speed += this._gravity;
             this.y += this._speed * T;
@@ -474,7 +497,7 @@ Crafty.c("crash", {
             smoke.y = this.y + INVADER_HEIGHT/2;
 
             if (this.y > STAGE_W) {
-                this.destroy();
+                ObjectPool.recycle(this);
             }
         });
     }
@@ -533,10 +556,16 @@ Crafty.c("explosion-invader", {
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
-        SoundManager.play("explosion1");
-        if (Crafty.math.randomInt(1,5) == 1) SoundManager.play("crash");
+        this.revive();
 
         this.timeout(function() { this.destroy(); }, 1000);
+    },
+
+    revive: function() {
+        SoundManager.play("explosion1");
+        if (Crafty.math.randomInt(1,5) == 1) SoundManager.play("crash");
+        this._Particles.particleCount = 0;
+        this._Particles.active = true;
     }
 });
 
@@ -560,9 +589,15 @@ Crafty.c("explosion-bomb", {
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
-        SoundManager.play("explosion1");
+        this.revive();
 
         this.timeout(function() { this.destroy(); }, 1000);
+    },
+
+    revive: function() {
+        SoundManager.play("explosion1");
+        this._Particles.particleCount = 0;
+        this._Particles.active = true;
     }
 });
 
@@ -586,9 +621,15 @@ Crafty.c("explosion-shield", {
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
-        SoundManager.play("ricochet");
+        this.revive();
 
         this.timeout(function() { this.destroy(); }, 1000);
+    },
+
+    revive: function() {
+        SoundManager.play("ricochet");
+        this._Particles.particleCount = 0;
+        this._Particles.active = true;
     }
 });
 
@@ -614,9 +655,15 @@ Crafty.c("explosion-human", {
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
-        SoundManager.play("explosion1");
+        this.revive();
 
         this.timeout(function() { this.destroy(); }, 1000);
+    },
+
+    revive: function() {
+        SoundManager.play("explosion1");
+        this._Particles.particleCount = 0;
+        this._Particles.active = true;
     }
 });
 
@@ -640,9 +687,15 @@ Crafty.c("explosion-block", {
             jitter: 0
         });
         this._Particles.emissionRate = 1000;
-        SoundManager.play("explosion2");
+        this.revive();
 
         this.timeout(function() { this.destroy(); }, 1000);
+    },
+
+    revive: function() {
+        SoundManager.play("explosion2");
+        this._Particles.particleCount = 0;
+        this._Particles.active = true;
     }
 });
 
@@ -669,5 +722,10 @@ Crafty.c("smoke", {
         });
 
         this.timeout(function() { this.destroy(); }, 3000);
+    },
+
+    revive: function() {
+        this._Particles.particleCount = 0;
+        this._Particles.active = true;
     }
 });
