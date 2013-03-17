@@ -108,7 +108,7 @@ Crafty.c("invader", {
     },
 
     bomb: function() {
-        this.timeout(this.bomb, 1000);
+        this.timeout(this.bomb, 500);
 
         if (!this.visible) return;
 
@@ -223,6 +223,14 @@ Crafty.c("block", {
         this.requires("2D, Canvas, Color, solid");
         this.attr({ w: BLOCK_WIDTH, h: BLOCK_HEIGHT, z: 100 });
         this.color("#ff0000");
+    },
+
+    recycle: function() {
+        this.removeComponent("solid");
+    },
+
+    revive: function() {
+        this.addComponent("solid");
     }
 });
 
@@ -435,6 +443,10 @@ Crafty.c("bomb", {
                 ObjectPool.recycle(this);
             }
         });
+    },
+
+    revive: function() {
+        this._hp = 5;
     }
 });
 

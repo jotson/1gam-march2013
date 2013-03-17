@@ -186,5 +186,9 @@ var ObjectPool = {
     recycle: function(e) {
         e.visible = false;
         e.active = false;
+
+        if (typeof(e.recycle) == 'function') {
+            e.recycle();
+        }
     }
 }
