@@ -100,3 +100,38 @@ function humansWin() {
 
     Crafty.scene("playing");
 }
+
+/**
+ * This is a thin wrapper around Crafty.audio to enable playing the same sound multiple times at once
+ * Each sound can be played simultaneously up to CHANNELS times.
+ */
+var SoundManager = {
+    CHANNELS: 5,
+
+    sounds: {},
+
+    /**
+     * Add a sound
+     * @param Object obj  Add a sound with an object like: { sound1: ['sound.mp3', 'sound.ogg', 'sound.wav'], sound2: ... }
+     */
+    add: function(obj) {
+        for (var id in obj) {
+            this.sounds[id] = 0;
+            for(i = 0; i < this.CHANNELS; i++) {
+                Crafty.audio.add(id + "-" + i, obj[id]);
+            }
+        }
+    },
+
+    /**
+     * Play a sound using each channel consecutively
+     * @param  string id  Play a sound using the id from add()
+     */
+    play: function(id) {
+        var n = this.sounds[id];
+
+        this.sounds[id] = (n+1) % this.CHANNELS;
+
+        Crafty.audio.play(id + "-" + n);
+    }
+}
