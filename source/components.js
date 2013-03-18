@@ -121,7 +121,7 @@ Crafty.c("invader", {
         if (!this.visible) return;
         if (Crafty.isPaused()) return;
 
-        if (Crafty.math.randomInt(1,200) == 1) {
+        if (Crafty.math.randomInt(1, Crafty("invader").length * 3) == 1) {
             var bubble = ObjectPool.get("speech-bubble")
             bubble.connect(this);
         }
