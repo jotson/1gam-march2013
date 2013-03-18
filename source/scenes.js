@@ -152,8 +152,30 @@ Crafty.scene("gameover", function() {
     SoundManager.stop("artillery");
 
     var win_text = '';
+    var invader_text = '';
     if (winner == 'invaders') {
+        var max_ships = INVADER_COLS * INVADER_ROWS;
         win_text = 'Invaders win!';
+        if (ships_remaining == 1) {
+            invader_text = 'You landed a single, pathetic little ship on the planet.';
+        } else {
+            invader_text = 'You landed ' + ships_remaining + ' of ' + max_ships + ' ships on the planet. ';
+            if (ships_remaining >= max_ships) {
+                invader_text += 'Perfect!';
+            } else if (ships_remaining >= 50) {
+                invader_text += 'Amazing!';
+            } else if (ships_remaining >= 40) {
+                invader_text += 'Pretty good!';
+            } else if (ships_remaining >= 30) {
+                invader_text += 'Not bad!';
+            } else if (ships_remaining >= 20) {
+                invader_text += 'So so.';
+            } else if (ships_remaining >= 10) {
+                invader_text += 'You can do better.';
+            } else if (ships_remaining > 0) {
+                invader_text += 'Seriously? Try again.';
+            }
+        }
         for(var i = 0; i < ships_remaining; i++) {
             ObjectPool.get('invader_sprite' + Crafty.math.randomInt(0,4) + ', invader, bouncy')
                 .attr({ x: Crafty.math.randomInt(0 + INVADER_WIDTH, STAGE_W - INVADER_WIDTH), y: STAGE_H - INVADER_HEIGHT })
@@ -163,6 +185,7 @@ Crafty.scene("gameover", function() {
 
     if (winner == 'humans') {
         win_text = 'Humans win!';
+        invader_text = 'Better luck next time.';
         Crafty.e("human");
     }
 
@@ -170,6 +193,10 @@ Crafty.scene("gameover", function() {
         .attr({ x: 0, y: 50, w: STAGE_W, h: 50 })
         .css({ 'text-align': 'center', 'font-family': FONTFACE, 'font-size': '40px', 'color': '#ff0000' })
         .text(win_text);
+    Crafty.e("2D, DOM, Text")
+        .attr({ x: 0, y: 100, w: STAGE_W, h: 50 })
+        .css({ 'text-align': 'center', 'font-family': FONTFACE, 'font-size': '20px', 'color': '#ff0000' })
+        .text(invader_text);
 
     var playButton = Crafty.e("button, ok_btn").attr({ x: 300, y: 150, w: 100, h: 50 });
     playButton.click = function() {
