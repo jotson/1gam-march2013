@@ -23,8 +23,9 @@ SOFTWARE.
 
 var THINGS_INVADERS_SAY = [
     "Noooo!",
+    "Yes!",
     "They got Kenny!",
-    "Elist, they said. See the universe, they said.",
+    "Enlist, they said. See the universe, they said.",
     "We have a cure for all diseases! We only want to impregnate 3% of your females!",
     "You damned dirty apes!",
     "We just want to deprogram you!",
@@ -32,7 +33,7 @@ var THINGS_INVADERS_SAY = [
     "These shields SUCK!",
     "What a mess!",
     "I miss my wife...",
-    "Odds of human victory: 7,451 to 1",
+    "Odds of human victory: 7,451 to 1 against",
     "Free your minds! Reeducation is the future!",
     "For the people!",
     "Have you seen these two droids?",
@@ -56,8 +57,9 @@ var THINGS_INVADERS_SAY = [
     "It's a trap!",
     "You MONSTER!",
     "You will be assimilated.",
+    "You will be upgraded.",
     "You will experience a tingling sensation, then death.",
-    "Congratulations. *slow clap*",
+    "Congrats. *slow clap*",
     "The cake is a lie.",
     "Can I get a bigger shield? Or one that just STAYS ON?",
     "Oh noes!",
@@ -66,4 +68,7 @@ var THINGS_INVADERS_SAY = [
     "My leg!",
     "Why are we flying in this zigzag pattern?!",
     "Does this thing go any faster?!",
+    "Where's the pool?",
+    ". . .",
+    "Meh.",
 ];

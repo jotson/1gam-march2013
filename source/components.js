@@ -21,7 +21,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 **/
 
-// TODO Speech bubbles
 // TODO Music
 
 Crafty.c("invader", {
@@ -33,6 +32,7 @@ Crafty.c("invader", {
         this.requires("2D, Canvas, SpriteAnimation, Mouse, solid");
         this.attr({ w: INVADER_WIDTH, h: INVADER_HEIGHT });
         this.timeout(this.bomb, 1000);
+        this.timeout(this.talk, 1000);
 
         this.requires("Collision").collision([10,10], [40,10], [45,38], [5,38]);
         if (DEBUG) this.requires("WiredHitBox");
@@ -113,6 +113,18 @@ Crafty.c("invader", {
         if (Crafty.math.randomInt(1,50) == 1) {
             ObjectPool.get("bomb").attr({ x: this.x + INVADER_WIDTH/2, y: this.y + INVADER_HEIGHT });
         }
+    },
+
+    talk: function() {
+        this.timeout(this.talk, 1000);
+
+        if (!this.visible) return;
+        if (Crafty.isPaused()) return;
+
+        if (Crafty.math.randomInt(1,200) == 1) {
+            var bubble = ObjectPool.get("speech-bubble")
+            bubble.connect(this);
+        }
     }
 });
 
@@ -134,7 +146,7 @@ Crafty.c("shield", {
 
         this.bind("TweenEnd", function(property) {
             if (DEBUG) console.log("Shield deactivated");
-            this._parent.detach(this);
+            if (this._parent) this._parent.detach(this);
             ObjectPool.recycle(this);
         });
     },
@@ -807,5 +819,71 @@ Crafty.c("bouncy", {
 
         this._vx = Crafty.math.randomInt(-200, 200);
         this._vy = -500;
+    }
+})
+
+Crafty.c("speech-bubble", {
+    message: null,
+
+    init: function() {
+        this.requires("2D, Canvas, Tween, Collision, speech_bubble");
+        this.attr({ w: 130, h: 68 });
+
+        this.bind("TweenEnd", function() {
+            if (this._parent) this._parent.detach(this);
+            ObjectPool.recycle(this);
+        })
+    },
+
+    connect: function(e) {
+        if (e.y < this.h + 25) {
+            ObjectPool.recycle(this);
+            return;
+        }
+        if (!e.visible) {
+            ObjectPool.recycle(this);
+            return;
+        }
+
+        this.x = e.x + e.w/2 - this.w/2;
+        this.y = e.y - this.h + 5;
+
+        // Prevent overlapping bubbles
+        if (this.hit("speech-bubble")) {
+            ObjectPool.recycle(this);
+            return;
+        }
+
+        // Create new message entity if necessary
+        if (this.message == null) {
+            this.message = Crafty.e("2D, DOM, Text, Tween");
+            this.message.css({
+                'font-size': '10px',
+                'font-family': FONTFACE,
+                'color': '#ffffff',
+                'text-align': 'center' });
+            this.attach(this.message);
+        }
+
+        // Choose a message
+        var nonsense = Crafty.math.randomElementOfArray(THINGS_INVADERS_SAY);
+        var offset = 0;
+        if (nonsense.length < 60) offset = 5;
+        if (nonsense.length < 50) offset = 8;
+        if (nonsense.length < 30) offset = 12;
+        if (nonsense.length < 20) offset = 18;
+        this.message.attr({ x: this.x + 5, y: this.y + 3 + offset, w: 120, h: 60 });
+        this.message.text(nonsense);
+
+        // Attach to entity
+        e.attach(this);
+
+        // Start tween
+        this.alpha = 0.95;
+        this.message.alpha = 1;
+        this.timeout(function() {
+            this.tween({ alpha: 0 }, 0.5 * FPS);
+            this.message.tween({ alpha: 0 }, 0.5 * FPS);
+        }, 4000);
     }
 })

@@ -52,6 +52,10 @@ Crafty.scene("loading", function() {
         ok_btn: [0, 0, 100, 50]
     });
 
+    Crafty.sprite(1, "assets/images/speech-bubble.png", {
+        speech_bubble: [0, 0, 130, 68]
+    });
+
     // Sounds
     SoundManager.add({
         missile: ["assets/sounds/railgun.ogg", "assets/sounds/railgun.mp3"],
@@ -94,6 +98,7 @@ Crafty.scene("loading", function() {
             "assets/sounds/crash.ogg",
             "assets/images/play-button.png",
             "assets/images/ok-button.png",
+            "assets/images/speech-bubble.png",
         ],
 
         function() {
