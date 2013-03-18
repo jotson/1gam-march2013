@@ -68,7 +68,9 @@ var THINGS_INVADERS_SAY = [
     "My leg!",
     "Why are we flying in this zigzag pattern?!",
     "Does this thing go any faster?!",
+    "Keep your eyes peeled for Jeff Goldblum...",
+    "I could've been at a barbecue!",
     "Where's the pool?",
-    ". . .",
+    "$@%#&!!",
     "Meh.",
 ];
