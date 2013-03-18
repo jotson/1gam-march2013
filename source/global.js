@@ -76,18 +76,18 @@ function createBunker(x, y) {
     }
 }
 
+var winner = null;
+var ships_remaining = null;
 function invadersWin() {
     if (DEBUG) console.log("Invaders win!");
 
     var invaders = Crafty(Crafty("invader-group")[0]);
     var human = Crafty(Crafty("human")[0]);
 
-    invaders.unbind("EnterFrame");
+    winner = 'invaders';
+    ships_remaining = Crafty("invader").length;
 
-    Crafty.e("explosion-human").attr({ x: human.x + HUMAN_WIDTH/2, y: human.y + HUMAN_HEIGHT/2 });
-    ObjectPool.recycle(human);
-
-    Crafty.scene("playing");
+    Crafty.scene("gameover");
 }
 
 function humansWin() {
@@ -96,9 +96,10 @@ function humansWin() {
     var invaders = Crafty(Crafty("invader-group")[0]);
     var human = Crafty(Crafty("human")[0]);
 
-    invaders.unbind("EnterFrame");
+    winner = 'humans';
+    ships_remaining = Crafty("invader").length;
 
-    Crafty.scene("playing");
+    Crafty.scene("gameover");
 }
 
 /**
@@ -119,15 +120,15 @@ var SoundManager = {
         for (var id in obj) {
             var v;
             if (this.sounds[id] == undefined) {
-                this.sounds[id] = { n: 0, variations: 1 };
+                this.sounds[id] = { channel: 0, variations: 1 };
                 v = 1;
             } else {
                 this.sounds[id].variations++;
                 v = this.sounds[id].variations;
             }
             name = id + "" + v;
-            for(i = 0; i < this.CHANNELS; i++) {
-                Crafty.audio.add(name + "-" + i, obj[id]);
+            for(channel = 0; channel < this.CHANNELS; channel++) {
+                Crafty.audio.add(name + "-" + channel, obj[id]);
             }
         }
     },
@@ -141,13 +142,33 @@ var SoundManager = {
 
         if (s == undefined) return;
 
-        var n = s.n;
+        var channel = s.channel;
         var v = s.variations;
         var name = id + "" + Crafty.math.randomInt(1,v);
 
-        this.sounds[id].n = (n+1) % this.CHANNELS;
+        this.sounds[id].channel = (channel+1) % this.CHANNELS;
 
-        Crafty.audio.play(name + "-" + n, repeat, volume);
+        Crafty.audio.play(name + "-" + channel, repeat, volume);
+    },
+
+    stop: function(id) {
+        if (!id) {
+            Crafty.audio.stop();
+        } else {
+            var s = this.sounds[id];
+
+            if (s == undefined) return;
+
+            var n = s.n;
+            var v = s.variations;
+            
+            for(var i = 1; i <= v; i++) {
+                var name = id + "" + i;
+                for(var channel = 0; channel < this.CHANNELS; channel++) {
+                    Crafty.audio.stop(name + '-' + channel);
+                }
+            }
+        }
     }
 }
 

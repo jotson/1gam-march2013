@@ -11,7 +11,7 @@ See CREDITS for full credits.
 
 The game should run in most modern browsers. I've only tested it in Chrome and Firefox. Let me know if it runs for you or not.
 
-- [Click here to play](http://flagrantdisregard.com/invaders/) - COMING SOON
+- [Click here to play](http://flagrantdisregard.com/invaders/)
 
 # How to play
 

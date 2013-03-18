@@ -21,11 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 **/
 
-// TODO Menu
-// TODO Restart menu
 // TODO Speech bubbles
 // TODO Music
-// TODO Could be a performance glitch caused by the raycasting
 
 Crafty.c("invader", {
     _startX: null,
@@ -35,7 +32,7 @@ Crafty.c("invader", {
     init: function() {
         this.requires("2D, Canvas, SpriteAnimation, Mouse, solid");
         this.attr({ w: INVADER_WIDTH, h: INVADER_HEIGHT });
-        this.bomb();
+        this.timeout(this.bomb, 1000);
 
         this.requires("Collision").collision([10,10], [40,10], [45,38], [5,38]);
         if (DEBUG) this.requires("WiredHitBox");
@@ -740,3 +737,75 @@ Crafty.c("smoke", {
         this.timeout(function() { ObjectPool.recycle(this); }, 3000);
     }
 });
+
+Crafty.c("button", {
+    init: function() {
+        this.requires("2D, Canvas, Mouse");
+
+        this.alpha = 0.7;
+
+        this.bind("MouseOver", function(e) { this.alpha = 1.0; });
+        this.bind("MouseOut", function(e) { this.alpha = 0.7; });
+        this.bind("MouseDown", function(e) { this.click(); });
+    },
+
+    click: function() {
+        // Override this
+    }
+});
+
+Crafty.c("bouncy", {
+    _vx: 0,
+    _vy: 0,
+    _gy: 10,
+    _friction: 10,
+
+    init: function() {
+        this.jump();
+
+        this.bind("EnterFrame", function() {
+            // Gravity
+            this._vy += this._gy;
+
+            // Boundaries
+            if (this.y > STAGE_H - INVADER_HEIGHT) {
+                this.y = STAGE_H - INVADER_HEIGHT;
+                this._vy = 0;
+            }
+
+            if (this.x > STAGE_W - INVADER_WIDTH) {
+                this.x = STAGE_W - INVADER_WIDTH - 1;
+                this._vx = -this._vx;
+            }
+
+            if (this.x < 0) {
+                this.x = 1;
+                this._vx = -this._vx;
+            }
+
+            // Friction
+            if (this._vx > 0) {
+                this._vx -= this._friction * T;
+            }
+            if (this._vx < 0) {
+                this._vx += this._friction * T;
+            }
+            if (Math.abs(this._vx) <= this._friction) {
+                this._vx = 0;
+            }
+
+            // Update position
+            this.x += this._vx * T;
+            this.y += this._vy * T;
+        });
+    },
+
+    jump: function() {
+        this.timeout(this.jump, Crafty.math.randomInt(1000,3000));
+
+        if (this.y < STAGE_H - INVADER_HEIGHT) return;
+
+        this._vx = Crafty.math.randomInt(-200, 200);
+        this._vy = -500;
+    }
+})
