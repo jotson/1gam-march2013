@@ -41,6 +41,11 @@ var HUMAN_HEIGHT = 50;
 var FPS = Crafty.timer.getFPS();
 var T = 1.0/FPS;
 
+var CHROME = false;
+if (navigator.userAgent.indexOf('Chrome') !== -1) {
+    CHROME = true;
+}
+
 function createBunker(x, y) {
     if (DEBUG) console.log("Creating bunker at " + x + ", " + y);
 

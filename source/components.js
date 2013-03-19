@@ -532,12 +532,13 @@ Crafty.c("crash", {
 });
 
 Crafty.c("starfield", {
-    _stars: 400,
+    _stars: 100,
     _minSpeed: 1, // pixels/s
     _maxSpeed: 20, // pixels/s
     _maxSize: 3,
 
     init: function() {
+        if (CHROME) this._stars = 400;
         for(var i = 0; i < this._stars; i++) {
             this.addStar();
         }
