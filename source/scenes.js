@@ -56,6 +56,10 @@ Crafty.scene("loading", function() {
         speech_bubble: [0, 0, 130, 68]
     });
 
+    Crafty.sprite(1, "assets/images/background.png", {
+        background: [0, 0, 700, 500]
+    });
+
     // Sounds
     SoundManager.add({
         missile: ["assets/sounds/railgun.ogg", "assets/sounds/railgun.mp3"],
@@ -64,6 +68,7 @@ Crafty.scene("loading", function() {
         explosion1: ["assets/sounds/explosion1.ogg", "assets/sounds/explosion1.mp3"],
         explosion2: ["assets/sounds/explosion2.ogg", "assets/sounds/explosion2.mp3"],
         crash: ["assets/sounds/crash.ogg", "assets/sounds/crash.mp3"],
+        music: ["assets/sounds/music.ogg", "assets/sounds/music.mp3"],
     });
 
     // Ricochet variations
@@ -94,11 +99,14 @@ Crafty.scene("loading", function() {
             "assets/sounds/explosion1.ogg",
             "assets/sounds/explosion2.mp3",
             "assets/sounds/explosion2.ogg",
+            "assets/sounds/music.mp3",
+            "assets/sounds/music.ogg",
             "assets/sounds/crash.mp3",
             "assets/sounds/crash.ogg",
             "assets/images/play-button.png",
             "assets/images/ok-button.png",
             "assets/images/speech-bubble.png",
+            "assets/images/background.png",
         ],
 
         function() {
@@ -125,9 +133,11 @@ Crafty.scene("menu", function() {
     if (DEBUG) console.log("Starting menu");
 
     // Start ambient sounds
+    SoundManager.stop();
     SoundManager.play("war", -1, 0.4);
     SoundManager.play("artillery", -1, 1);
 
+    Crafty.e("2D, Canvas, background").attr({ z: -1000 });
     Crafty.e("starfield");
 
     // Invaders
@@ -151,10 +161,12 @@ Crafty.scene("menu", function() {
 Crafty.scene("gameover", function() {
     if (DEBUG) console.log("Game over");
 
+    Crafty.e("2D, Canvas, background").attr({ z: -1000 });
     Crafty.e("starfield");
 
     SoundManager.stop("war");
     SoundManager.stop("artillery");
+    SoundManager.play("music", -1);
 
     var win_text = '';
     var invader_text = '';
@@ -213,6 +225,7 @@ Crafty.scene("playing", function() {
     if (DEBUG) console.log("Starting play");
 
     // Create starfield
+    Crafty.e("2D, Canvas, background").attr({ z: -1000 });
     Crafty.e("starfield");
 
     // Create bunkers
