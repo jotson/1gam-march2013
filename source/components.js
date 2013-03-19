@@ -21,8 +21,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 **/
 
-// TODO Music
-
 Crafty.c("invader", {
     _startX: null,
     _startY: null,
