@@ -52,6 +52,15 @@ Crafty.c("invader", {
             }
         });
 
+        this.bind("Remove", function() {
+            // This is here strictly to prevent a bug where the talk() and bomb()
+            // timeouts would sometimes still be called after the entity had been
+            // removed from the stage. The effect was that talk bubbles were showing
+            // up over invisible invaders. This works by setting the .visible
+            // property to false which is checked by the talk() and bomb() callbacks.
+            ObjectPool.recycle(this);
+        })
+
         this.bind("EnterFrame", function() {
             if (!this.visible) return;
         });
@@ -106,7 +115,6 @@ Crafty.c("invader", {
         this.timeout(this.bomb, 500);
 
         if (!this.visible) return;
-
         if (Crafty.isPaused()) return;
 
         if (Crafty.math.randomInt(1,50) == 1) {
