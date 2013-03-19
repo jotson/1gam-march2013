@@ -156,6 +156,14 @@ Crafty.scene("menu", function() {
     playButton.click = function() {
         Crafty.scene("playing");
     };
+
+    // Show stats
+    var stats = Crafty.e("2D, DOM, Text");
+    stats.attr({ w: STAGE_W-10, x: 5, y: 5 });
+    stats.css({ 'color': '#444444', 'font-size': '12px', 'text-align': 'right', 'font-family': FONTFACE });
+    stats.bind("MessureFPS", function(fps) {
+        stats.text("FPS: " + fps.value + " — Entities: " + Crafty('*').length);
+    });
 });
 
 Crafty.scene("gameover", function() {
@@ -219,6 +227,14 @@ Crafty.scene("gameover", function() {
     playButton.click = function() {
         Crafty.scene("menu");
     };
+
+    // Show stats
+    var stats = Crafty.e("2D, DOM, Text");
+    stats.attr({ w: STAGE_W-10, x: 5, y: 5 });
+    stats.css({ 'color': '#444444', 'font-size': '12px', 'text-align': 'right', 'font-family': FONTFACE });
+    stats.bind("MessureFPS", function(fps) {
+        stats.text("FPS: " + fps.value + " — Entities: " + Crafty('*').length);
+    });
 });
 
 Crafty.scene("playing", function() {
@@ -232,10 +248,6 @@ Crafty.scene("playing", function() {
     createBunker(125, 400);
     createBunker(350, 400);
     createBunker(575, 400);
-    // createBunker(275, 400);
-    // createBunker(425, 400);
-    // createBunker(200, 400);
-    // createBunker(500, 400);
 
     // Add human to stage
     var h = Crafty.e("human");
@@ -284,7 +296,7 @@ Crafty.scene("playing", function() {
     var stats = Crafty.e("2D, DOM, Text");
     stats.attr({ w: STAGE_W-10, x: 5, y: 5 });
     stats.css({ 'color': '#444444', 'font-size': '12px', 'text-align': 'right', 'font-family': FONTFACE });
-    stats.bind("EnterFrame", function() {
-        stats.text("Entities: " + Crafty('*').length);
+    stats.bind("MessureFPS", function(fps) {
+        stats.text("FPS: " + fps.value + " — Entities: " + Crafty('*').length);
     });
 });

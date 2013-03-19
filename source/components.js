@@ -527,9 +527,9 @@ Crafty.c("crash", {
 });
 
 Crafty.c("starfield", {
-    _stars: 150,
-    _minSpeed: 10, // pixels/s
-    _maxSpeed: 50, // pixels/s
+    _stars: 400,
+    _minSpeed: 1, // pixels/s
+    _maxSpeed: 20, // pixels/s
     _maxSize: 3,
 
     init: function() {
@@ -542,8 +542,8 @@ Crafty.c("starfield", {
         if (x == null || x == undefined) x = Crafty.math.randomInt(1, STAGE_W);
         if (y == null || y == undefined) y = Crafty.math.randomInt(1, STAGE_H);
         var speed = Crafty.math.randomInt(this._minSpeed, this._maxSpeed);
-        var alpha = speed / this._maxSpeed * 0.9;
-        var size = Math.ceil(speed / this._maxSpeed * this._maxSize);
+        var alpha = speed / this._maxSpeed * 1;
+        var size =  Crafty.math.randomInt(1, this._maxSize);
 
         var star = Crafty.e("2D, Canvas, Color")
         star.attr({ x: x, y: y, z: 0, w: size, h: size, alpha: alpha, speed: speed });
