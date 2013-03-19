@@ -32,8 +32,8 @@ var INVADER_HEIGHT = 50;
 var INVADER_COLS = 11;
 var INVADER_ROWS = 5;
 
-var BLOCK_WIDTH = 4;
-var BLOCK_HEIGHT = 4;
+var BLOCK_WIDTH = 8;
+var BLOCK_HEIGHT = 8;
 
 var HUMAN_WIDTH = 50;
 var HUMAN_HEIGHT = 50;
@@ -45,16 +45,11 @@ function createBunker(x, y) {
     if (DEBUG) console.log("Creating bunker at " + x + ", " + y);
 
     var shape = [
-        '     ***',
-        '   *******',
-        '  *********',
-        ' ***********',
-        '*************',
-        '*************',
-        '*****   *****',
-        '****     ****',
-        '***       ***',
-        '***       ***'
+        '  **',
+        ' ****',
+        '******',
+        '******',
+        '**  **',
     ];
 
     var height = shape.length * BLOCK_HEIGHT;

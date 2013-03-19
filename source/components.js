@@ -36,11 +36,12 @@ Crafty.c("invader", {
         if (DEBUG) this.requires("WiredHitBox");
         this.onHit("solid", function(hits) {
             if (!this.visible) return;
-
             if (!this.has("invader")) return;
 
             for(var i = 0; i < hits.length; i++) {
                 var other = hits[i].obj;
+                if (!other.visible) continue;
+
                 if (other.has("block")) {
                     ObjectPool.recycle(other);
                 }
@@ -303,8 +304,8 @@ Crafty.c("human", {
             for(var i = 0; i < blocks.length; i++) {
                 // Use a narrow ray to test if we're under a block
                 // Only test a sample of all of the blocks
-                if (Crafty.math.randomInt(1,5) != 1) continue;
                 if (!Crafty(blocks[i]).visible) continue;
+                if (Crafty.math.randomInt(1,5) != 1) continue;
 
                 if (Crafty(blocks[i]).intersect(center-BLOCK_WIDTH, 0, BLOCK_WIDTH*2, STAGE_H)) {
                     canFire = false;
@@ -364,7 +365,9 @@ Crafty.c("missile", {
 
             for(var i = 0; i < hits.length; i++) {
                 var other = hits[i].obj;
-                if (other.has("invader") && other.visible) {
+                if (!other.visible) continue;
+
+                if (other.has("invader")) {
                     ObjectPool.get("explosion-invader").attr({ x: other.x + other.attr('w')/2, y: other.y + other.attr('h')/2 });
                     other.addComponent("crash");
                     other.removeComponent("invader");
@@ -374,11 +377,11 @@ Crafty.c("missile", {
                     var invaders = Crafty('invader-group');
                     Crafty(invaders[0]).findEdges();
                 }
-                if (other.has("shield") && other.visible) {
+                if (other.has("shield")) {
                     ObjectPool.get("explosion-shield").attr({ x: this.x, y: this.y });
                     ObjectPool.recycle(this);
                 }
-                if (other.has("block") && other.visible) {
+                if (other.has("block")) {
                     ObjectPool.get("explosion-block").attr({ x: this.x, y: this.y });
                     ObjectPool.recycle(this);
                     ObjectPool.recycle(other);
@@ -406,7 +409,7 @@ Crafty.c("missile", {
 
 Crafty.c("bomb", {
     _speed: 250, // pixels/s
-    _hp: 5,
+    _hp: 1,
 
     init: function() {
         this.requires("2D, Canvas, SpriteAnimation, bomb_sprite, solid");
@@ -418,6 +421,8 @@ Crafty.c("bomb", {
 
             for(var i = 0; i < hits.length; i++) {
                 var other = hits[i].obj;
+                if (!other.visible) continue;
+
                 if (other.has("human")) {
                     ObjectPool.get("explosion-human").attr({ x: other.x + HUMAN_WIDTH/2, y: other.y });
                     ObjectPool.recycle(this);
@@ -459,7 +464,7 @@ Crafty.c("bomb", {
     },
 
     revive: function() {
-        this._hp = 5;
+        this._hp = 1;
     }
 });
 
