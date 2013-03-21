@@ -1,11 +1,17 @@
 #!/bin/sh
 
-SOUNDS=assets/sounds
+SOUNDS=/home/john/code/OneGameAMonth/2013/03-mar/js/assets/sounds
 
 # Build ogg files
 echo "Building .ogg files..."
 for f in $SOUNDS/*.mp3
 do
     file=`basename $f .mp3`
-    avconv -i $SOUNDS/$file.mp3 -codec libvorbis -y -v error $SOUNDS/$file.ogg
+    MP3MOD=`stat -c %Y $SOUNDS/$file.mp3`
+    OGGMOD=`stat -c %Y $SOUNDS/$file.ogg`
+    echo $OGGMOD
+    if [ $MP3MOD -gt $OGGMOD ]; then
+        echo 'Updating $file.ogg'
+        #avconv -i $SOUNDS/$file.mp3 -codec libvorbis -y -v error $SOUNDS/$file.ogg
+    fi
 done

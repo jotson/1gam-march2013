@@ -5,7 +5,7 @@ See CREDITS for full credits.
 
 # Gameplay video
 
-- [Watch video]() - COMING SOON
+- [Watch video](http://www.youtube.com/watch?v=OQZ8xB8lYBI)
 
 # Running the game
 
@@ -19,6 +19,8 @@ Move the mouse pointer over ships to activate their shields. Try to block incomi
 
 # Dev Notes
 
+- The js/ folder contains a Javascript implementation of the game built with [Crafty](http://craftyjs.com)
+- The nme/ folder contains an NME implementation of the game built with [NME and HaXe](http://nme.io)
 - Crafty comes with a pretty sweet (but undocumented) particle system component
 - It includes a very handy convex polygon collision detector that is very easy to use
 - The WiredHitBox component is a very handy 
