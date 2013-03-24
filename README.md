@@ -20,7 +20,7 @@ Move the mouse pointer over ships to activate their shields. Try to block incomi
 # Dev Notes
 
 - The js/ folder contains a Javascript implementation of the game built with [Crafty](http://craftyjs.com)
-- The nme/ folder contains an NME implementation of the game built with [NME and HaXe](http://nme.io)
+- The nme/ folder contains an NME implementation of the game built with [NME and Haxe](http://nme.io)
 - Crafty comes with a pretty sweet (but undocumented) particle system component
 - It includes a very handy convex polygon collision detector that is very easy to use
 - The WiredHitBox component is a very handy 
@@ -35,3 +35,11 @@ Move the mouse pointer over ships to activate their shields. Try to block incomi
 - Having an AI component that can "play" your game can make testing easier.
 - Chrome performance > Firefox performance
 - Set DEBUG = true in global.js to see collision hitboxes and console logging.
+
+About Haxe, NME, and HaxeFlixel
+
+- HaxeFlixel has all of the basics and then some (object pools, particle systems). Swiss army knife of 2D games.
+- HaxeFlixel uses an optimized rendering system that dramatically improves frame rates on mobile devices compared to just using the DisplayList.
+- NME and HaxeFlixel docs aren't great.
+- Source for HaxeFlixel and NME is on Github.
+- HaxeFlixel manages scaling of your game to different screen sizes for you. You just need to set the game size when you init the Engine and then keep track of the game size in the HXP.screen.width and HXP.screen.height.
