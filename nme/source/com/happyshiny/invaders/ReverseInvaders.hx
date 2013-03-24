@@ -44,11 +44,6 @@ class ReverseInvaders extends Sprite
     {
         Lib.current.stage.align = StageAlign.TOP_LEFT;
         Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
-
-        #if android
-        FlxG.addSound("Artillery");
-        FlxG.addSound("Music");
-        #end
     }
 
     public static function main()

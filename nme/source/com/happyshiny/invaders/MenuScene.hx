@@ -3,6 +3,8 @@ package com.happyshiny.invaders;
 import nme.Assets;
 import nme.geom.Rectangle;
 import nme.net.SharedObject;
+import nme.display.FPS;
+import nme.Lib;
 import org.flixel.FlxButton;
 import org.flixel.FlxG;
 import org.flixel.FlxPath;
@@ -11,8 +13,6 @@ import org.flixel.FlxSprite;
 import org.flixel.FlxState;
 import org.flixel.FlxText;
 import org.flixel.FlxU;
-import nme.display.FPS;
-import nme.Lib;
 
 class MenuScene extends FlxState
 {
@@ -39,18 +39,24 @@ class MenuScene extends FlxState
         new Starfield(this, 200);
 
         // Titles
-        add(
-            new FlxText(0, 10, FlxG.width, "Reverse Invaders")
+        // TODO Graphic titles
+        add(new FlxText(0, 10, FlxG.width, "Reverse Invaders")
             .setFormat("assets/fonts/Offside-Regular.ttf", 50, 0xff0000, "center", 0, false));
-        add(
-            new FlxText(0, 70, FlxG.width, "John Watson")
+        add(new FlxText(0, 70, FlxG.width, "John Watson")
             .setFormat("assets/fonts/Offside-Regular.ttf", 20, 0xff0000, "center", 0, false));
 
         // Invaders
         add(new InvaderGroup(130, 0, true));
 
-        // TODO Play button
-        // TODO Quit button
+        // Buttons
+        var playButton = new Button(FlxG.width/2 - 50/2 - 100, 350, "assets/images/play-button.png", function() { FlxG.switchState(new GameScene()); });
+        var quitButton = new Button(FlxG.width/2 - 50/2 + 100, 350, "assets/images/quit-button.png", function() { Lib.exit(); });
+
+        // TODO Don't show button in flash || html
+        add(playButton);
+        add(quitButton);
+
+        // TODO Sound on/off button
     }
     
     public override function destroy():Void

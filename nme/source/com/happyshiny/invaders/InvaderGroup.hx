@@ -25,7 +25,7 @@ class InvaderGroup extends FlxGroup
     {
         super();
 
-        for(i in 0...10)
+        for(i in 0...11)
         {
             if (demo)
             {

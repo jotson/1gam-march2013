@@ -6,6 +6,8 @@ import nme.media.SoundTransform;
 
 class Helper {
     public static function play(sound : String, volume : Float, loop : Bool = false) {
+        if (!FlxG.mute) return;
+
         #if android
             // Looping and referencing sounds by ID doesn't seem to work on Android
             var t = new SoundTransform(volume);
