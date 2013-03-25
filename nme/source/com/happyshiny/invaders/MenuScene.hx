@@ -36,7 +36,7 @@ class MenuScene extends FlxState
         // Helper.play("assets/music/war-sounds.mp3", 0.5, true);
 
         // Starfield
-        new Starfield(this, 200);
+        add(new Starfield(200));
 
         // Titles
         // TODO Graphic titles
@@ -45,17 +45,28 @@ class MenuScene extends FlxState
         add(new FlxText(0, 70, FlxG.width, "John Watson")
             .setFormat("assets/fonts/Offside-Regular.ttf", 20, 0xff0000, "center", 0, false));
 
+        // Groups for collision detection
+        Helper.setupGroups();
+        add(Helper.bombGroup);
+        add(Helper.missileGroup);
+        add(Helper.blockGroup);
+        add(Helper.shieldGroup);
+
         // Invaders
-        add(new InvaderGroup(130, 0, true));
+        Helper.invaderGroup = new InvaderGroup(130, 0, true);
+        add(Helper.invaderGroup);
 
         // Buttons
-        var playButton = new Button(FlxG.width/2 - 50/2 - 100, 350, "assets/images/play-button.png", function() { FlxG.switchState(new GameScene()); });
-        var quitButton = new Button(FlxG.width/2 - 50/2 + 100, 350, "assets/images/quit-button.png", function() { Lib.exit(); });
-
-        // TODO Don't show button in flash || html
-        add(playButton);
-        add(quitButton);
-
+        #if (flash || html)
+        add(new Button(FlxG.width/2, 350, "assets/images/play-button.png",
+                        function() { FlxG.switchState(new GameScene()); }));
+        #else
+        add(new Button(FlxG.width/2 - 100, 350, "assets/images/play-button.png",
+                        function() { FlxG.switchState(new GameScene()); }));
+        add(new Button(FlxG.width/2 + 100, 350, "assets/images/quit-button.png",
+                        function() { Lib.exit(); }));
+        #end
+        
         // TODO Sound on/off button
     }
     
@@ -67,5 +78,12 @@ class MenuScene extends FlxState
     public override function update():Void
     {
         super.update();
+
+        #if !android
+        if (FlxG.keys.justPressed("ESCAPE"))
+        {
+            Lib.exit();
+        }
+        #end
     }   
 }

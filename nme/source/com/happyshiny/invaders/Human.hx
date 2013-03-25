@@ -3,6 +3,8 @@ package com.happyshiny.invaders;
 import org.flixel.FlxSprite;
 import org.flixel.FlxState;
 import org.flixel.FlxG;
+import org.flixel.FlxObject;
+import com.happyshiny.invaders.InvaderGroup;
 import nme.Lib;
 
 class Human extends FlxSprite
@@ -13,13 +15,10 @@ class Human extends FlxSprite
     private var dirTimer : Float = 0;
     private var fastMode : Bool = false;
     private var frozen : Bool = false;
-    private var scene : FlxState = null;
 
-    public function new(scene : FlxState)
+    public function new()
     {
         super();
-
-        this.scene = scene;
 
         width = 50;
         height = 50;
@@ -35,6 +34,25 @@ class Human extends FlxSprite
     {
         super.update();
 
+        FlxG.overlap(Helper.missileGroup, Helper.blockGroup, function(missile, block) {
+            missile.kill();
+            block.kill();
+        });
+        
+        FlxG.overlap(Helper.missileGroup, Helper.invaderGroup, function(missile, invader) {
+            missile.kill();
+            invader.kill();
+        });
+        
+        FlxG.overlap(Helper.missileGroup, Helper.bombGroup, function(missile, bomb) {
+            missile.kill();
+            bomb.kill();
+        });
+        
+        FlxG.overlap(Helper.missileGroup, Helper.shieldGroup, function(missile, shield) {
+            missile.kill();
+        });
+        
         shotTimer -= FlxG.elapsed;
         dirTimer -= FlxG.elapsed;
 
@@ -58,50 +76,76 @@ class Human extends FlxSprite
 
     public function fire()
     {
-        // TODO Fire missile
         // Check for shot
         // If underneath invader, canFire = true
         // If underneath bunker, canFire = false
-        // if (this._fastMode) {
-        //     this.delay(this.fire, this._shotRecharge/2);
-        // } else {
-        //     this.delay(this.fire, this._shotRecharge);
-        // }
+        if (this.fastMode) {
+            shotTimer = shotRecharge/2;
+        } else {
+            shotTimer = shotRecharge;
+        }
 
-        // if (!this.visible) return;
+        if (!this.frozen) {
+            var canFire = false;
+            var center = x + this.width/2;
 
-        // if (!this._frozen) {
-        //     var canFire = false;
-        //     var center = this.x + HUMAN_WIDTH/2;
+            var wideRect = new FlxObject();
+            wideRect.x = center-100;
+            wideRect.y = 0;
+            wideRect.width = 200;
+            wideRect.height = FlxG.height;
 
-        //     var invaders = Crafty('invader');
-        //     for(var i = 0; i < invaders.length; i++) {
-        //         // Use a 200px wide ray to test if we're under an invader
-        //         if (!Crafty(invaders[i].visible)) continue;
-                
-        //         if (Crafty(invaders[i]).intersect(center-100, 0, 200, STAGE_H)) {
-        //             canFire = true;
-        //             break;
-        //         }
-        //     }
-        //     var blocks = Crafty('block');
-        //     for(var i = 0; i < blocks.length; i++) {
-        //         // Use a narrow ray to test if we're under a block
-        //         // Only test a sample of all of the blocks
-        //         if (!Crafty(blocks[i]).visible) continue;
-        //         if (Crafty.math.randomInt(1,5) != 1) continue;
+            var narrowRect = new FlxObject();
+            narrowRect.x = center-5;
+            narrowRect.y = 0;
+            narrowRect.width = 10;
+            narrowRect.height = FlxG.height;
 
-        //         if (Crafty(blocks[i]).intersect(center-BLOCK_WIDTH, 0, BLOCK_WIDTH*2, STAGE_H)) {
-        //             canFire = false;
-        //             break;
-        //         }
-        //     }
+            canFire = false;
+            for(i in 0...Helper.invaderGroup.length)
+            {
+                if (Helper.isClass(Helper.invaderGroup.members[i], "com.happyshiny.invaders.Invader"))
+                {
+                    var invader = cast(Helper.invaderGroup.members[i], Invader);
+                    if (!invader.alive) continue;
+                    
+                    // Use a 200px wide ray to test if we're under an invader
+                    if (FlxG.overlap(invader, wideRect))
+                    {
+                        canFire = true;
+                        break;
+                    }
+                }
+            }
 
-        //     if (canFire) {
-        //         if (DEBUG) console.log("Fire missile");
-        //         ObjectPool.get("missile").attr({ x: this.x + HUMAN_WIDTH/2, y: this.y });
-        //     }
-        // }
+            for(i in 0...Helper.blockGroup.length)
+            {
+                if (Helper.isClass(Helper.blockGroup.members[i], "com.happyshiny.invaders.Block"))
+                {
+                    var block = cast(Helper.blockGroup.members[i], Block);
+                    if (!block.visible) continue;
+
+                    // Use a narrow ray to test if we're under a block
+                    // Only test a sample of all of the blocks
+                    if (Std.random(5) != 0) continue;
+                    if (FlxG.overlap(block, narrowRect))
+                    {
+                        canFire = false;
+                        break;
+                    }
+                }
+            }
+
+            if (canFire) {
+                var m : Missile = cast(Helper.missileGroup.recycle(Missile), Missile);
+                if (m != null)
+                {
+                    m.x = x + width/2;
+                    m.y = y;
+                    m.revive();
+                }
+            }
+        }
     }
 
     public function changeDirection()
@@ -127,6 +171,11 @@ class Human extends FlxSprite
         dirTimer = Math.random() * maxDelay + 1;
     }
 
+    public override function hurt(Damage:Float):Void
+    {
+        freeze();
+    }
+
     public function freeze()
     {
         if (!frozen) {
@@ -135,9 +184,37 @@ class Human extends FlxSprite
         frozen = true;
         velocity.x = 0;
     }
+
+
 }
 
 class Missile extends FlxSprite
 {
+    public function new()
+    {
+        super();
 
+        makeGraphic(2, 4, 0xffff0000);
+        centerOffsets();
+
+        this.velocity.y = -200;
+    }
+
+    public override function update()
+    {
+
+        super.update();
+
+        if (y < 0)
+        {
+            // TODO Explosion
+            kill();
+        }
+        
+    }
+
+    public override function revive()
+    {
+        super.revive();
+    }
 }

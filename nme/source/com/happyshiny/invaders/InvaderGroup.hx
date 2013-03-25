@@ -19,27 +19,29 @@ class InvaderGroup extends FlxGroup
     public var y : Float = 0;
     public var dir = 1;
     public var speed = 10;
-    public var descend = 0;
+    public var descend : Float = 0;
 
-    public function new(y : Int, descend : Int = 50, demo : Bool = false)
+    public function new(y : Int, descend : Float = 50, demo : Bool = false)
     {
         super();
+
+        Helper.invaderGroup = this;
 
         for(i in 0...11)
         {
             if (demo)
             {
-                add(new Invader(60 + 50 * i, y, 2, this));
-                add(new Invader(60 + 50 * i, y + 50, 1, this));
-                add(new Invader(60 + 50 * i, y + 100, 3, this));
+                add(new Invader(60 + 50 * i, y, 2));
+                add(new Invader(60 + 50 * i, y + 50, 1));
+                add(new Invader(60 + 50 * i, y + 100, 3));
             }
             else
             {
-                add(new Invader(60 + 50 * i, y, 2, this));
-                add(new Invader(60 + 50 * i, y + 50, 1, this));
-                add(new Invader(60 + 50 * i, y + 100, 1, this));
-                add(new Invader(60 + 50 * i, y + 150, 3, this));
-                add(new Invader(60 + 50 * i, y + 200, 3, this));
+                add(new Invader(60 + 50 * i, y, 2));
+                add(new Invader(60 + 50 * i, y + 50, 1));
+                add(new Invader(60 + 50 * i, y + 100, 1));
+                add(new Invader(60 + 50 * i, y + 150, 3));
+                add(new Invader(60 + 50 * i, y + 200, 3));
             }
         }
 
@@ -51,7 +53,7 @@ class InvaderGroup extends FlxGroup
         for(i in 0...length)
         {
             var invader = cast(members[i], Invader);
-            if (invader.alive) invader.updateMovement(this, 0);
+            if (invader.alive) invader.updateMovement(0);
         }
     }
 
@@ -72,9 +74,9 @@ class InvaderGroup extends FlxGroup
                 if (descend != 0) speed += 5;
                 for(i in 0...length)
                 {
-                    if (Helper.getClass(members[i]) != "com.happyshiny.invaders.Invader") continue;
+                    if (!Helper.isClass(members[i], "com.happyshiny.invaders.Invader")) continue;
                     var invader = cast(members[i], Invader);
-                    if (invader.alive) invader.updateMovement(this, descend * 0.3);
+                    if (invader.alive) invader.updateMovement(descend);
                 }
             }
 
@@ -93,7 +95,7 @@ class InvaderGroup extends FlxGroup
 
         for(i in 0...length)
         {
-            if (Helper.getClass(members[i]) != "com.happyshiny.invaders.Invader") continue;
+            if (!Helper.isClass(members[i], "com.happyshiny.invaders.Invader")) continue;
             var invader = cast(members[i], Invader);
             if (invader.alive)
             {
@@ -121,18 +123,16 @@ class InvaderGroup extends FlxGroup
 
 class Invader extends FlxSprite
 {
-    private var group : InvaderGroup = null;
     private var shield : Bool = false;
     private var bombTimer : Float = 0;
     private var talkTimer : Float = 0;
     private var z = 200;
     public var hasShield : Bool = false;
 
-    public function new(x : Int, y: Int, kind : Int, group : InvaderGroup)
+    public function new(x : Int, y: Int, kind : Int)
     {
         super(x, y);
 
-        this.group = group;
         loadGraphic("assets/images/invaders.png", true, true, 50, 50);
 
         // addFilter(new GlowFilter(0x3399ff, 0.5, 10, 10, 0.5, 1), new FlxPoint(0, 0));
@@ -199,7 +199,7 @@ class Invader extends FlxSprite
                     if (overlapsPoint(point) && !hasShield)
                     {
                         hasShield = true;
-                        var shield : Shield = cast(group.recycle(Shield), Shield);
+                        var shield : Shield = cast(Helper.shieldGroup.recycle(Shield), Shield);
                         shield.parent = this;
                         shield.revive();
                     }
@@ -208,23 +208,22 @@ class Invader extends FlxSprite
         }
     }
 
-    public function updateMovement(group : InvaderGroup, y : Float)
+    public function updateMovement(y : Float)
     {
         this.y += y;
-        velocity.x = group.dir * group.speed;
+        velocity.x = Helper.invaderGroup.dir * Helper.invaderGroup.speed;
     }
 
     public function bomb()
     {
         if (Std.random(50) == 0) {
-            var bomb = group.recycle(Bomb);
+            var bomb = Helper.bombGroup.recycle(Bomb);
             if (bomb != null)
             {
                 var bomb : Bomb = cast(bomb, Bomb);
                 bomb.revive();
                 bomb.x = x + this.width/2;
                 bomb.y = y + this.width/2;
-                group.sort("z");
             }
         }
     }
@@ -233,30 +232,43 @@ class Invader extends FlxSprite
     {
         // TODO Talk
     }
+
+    public override function kill()
+    {
+        super.kill();
+
+        Helper.invaderGroup.findEdges();
+    }
 }
 
 class Bomb extends FlxSprite
 {
-    private var group : InvaderGroup = null;
     private var z = 100;
 
     public function new()
     {
         super();
 
-        width = 8;
-        height = 8;
+        makeGraphic(8, 8, 0xff3399ff);
         centerOffsets();
-        setClipping(Math.ceil(width), Math.ceil(height));
         alpha = 1;
-
-        fill(0xff3399ff);
-
         velocity.y = 200;
     }
 
     public override function update()
     {
+        super.update();
+
+        FlxG.overlap(Helper.bombGroup, Helper.blockGroup, function(bomb, block) {
+            bomb.kill();
+            block.kill();
+        });
+
+        FlxG.overlap(Helper.bombGroup, Helper.human, function(bomb, human) {
+            bomb.kill();
+            human.hurt(0);
+        });
+
         if (y > FlxG.height)
         {
             // TODO Explosion

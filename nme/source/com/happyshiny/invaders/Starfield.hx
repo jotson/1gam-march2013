@@ -1,19 +1,20 @@
 package com.happyshiny.invaders;
 
 import org.flixel.FlxSprite;
+import org.flixel.FlxGroup;
 import org.flixel.FlxState;
 import org.flixel.FlxG;
 import nme.Lib;
 
-class Starfield extends FlxSprite
+class Starfield extends FlxGroup
 {
-    public function new(scene : FlxState, number : Int)
+    public function new(number : Int)
     {
         super();
 
         for (i in 0...number)
         {
-            scene.add(new Star());
+            add(new Star());
         }
     }
 }
@@ -24,7 +25,7 @@ class Star extends FlxSprite
     private var MAX_SPEED : Int = 50;
     private var MAX_SIZE : Int = 4;
 
-    private var size : Float = 1;
+    private var size : Int = 1;
 
     public function new()
     {
@@ -34,13 +35,12 @@ class Star extends FlxSprite
         // Far away stars are dimmer and move more slowly
         x = Math.random() * FlxG.width;
         y = Math.random() * FlxG.height;
-        size = Math.random() * (MAX_SIZE-1) + 1;
+        size = Std.random(MAX_SIZE) + 1;
         width = size;
         height = size;
+        makeGraphic(size, size, 0xffffffff);
         centerOffsets();
-        setClipping(Math.ceil(width), Math.ceil(height));
 
-        fill(0xffffffff);
         alpha = Math.random() * 0.8 + 0.1;
 
         velocity.x = 0;
@@ -50,10 +50,11 @@ class Star extends FlxSprite
 
     public override function update()
     {
+        super.update();
+        
         if (y > FlxG.height) {
             y = -5;
             x = Math.random() * FlxG.width;
         }
-        super.update();
     }
 }
