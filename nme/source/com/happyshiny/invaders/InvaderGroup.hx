@@ -7,6 +7,7 @@ import org.flixel.FlxPoint;
 import org.flixel.FlxGroup;
 import org.flixel.FlxState;
 import org.flixel.FlxG;
+import org.flixel.tweens.util.Ease;
 import nme.Lib;
 
 class InvaderGroup extends FlxGroup
@@ -252,6 +253,15 @@ class Bomb extends FlxSprite
         centerOffsets();
         alpha = 1;
         velocity.y = 200;
+        acceleration.y = 300;
+    }
+
+    public override function revive()
+    {
+        super.revive();
+
+        velocity.y = 200;
+        alpha = 1;
     }
 
     public override function update()
@@ -299,7 +309,8 @@ class Shield extends FlxSprite
         play("default");
 
         width = 50;
-        height = 50;
+        height = 5;
+        centerOffsets();
     }
 
     public override function update()
@@ -309,7 +320,7 @@ class Shield extends FlxSprite
         if (parent != null)
         {
             x = parent.x - 10;
-            y = parent.y + 15;
+            y = parent.y + 35;
         }
     }
 
@@ -329,6 +340,6 @@ class Shield extends FlxSprite
 
         alpha = 1;
         
-        FlxG.tween(this, { alpha: 0.3 }, lifetime, { complete: kill });
+        FlxG.tween(this, { alpha: 0.3 }, lifetime, { ease: Ease.bounceOut, complete: kill });
     }
 }

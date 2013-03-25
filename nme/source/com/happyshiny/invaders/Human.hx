@@ -228,7 +228,9 @@ class Missile extends FlxSprite
 
         if (y < 0)
         {
-            // TODO Explosion
+            var explosion = cast(FlxG.state.recycle(ShieldExplosion), ShieldExplosion);
+            explosion.goBoom(this);
+
             kill();
         }
         

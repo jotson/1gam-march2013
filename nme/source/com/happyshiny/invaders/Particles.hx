@@ -7,6 +7,7 @@ import org.flixel.FlxG;
 import org.flixel.FlxObject;
 import org.flixel.FlxParticle;
 import org.flixel.FlxPoint;
+import org.flixel.tweens.util.Ease;
 import nme.Lib;
 
 class FadingParticle extends FlxParticle
@@ -31,7 +32,18 @@ class FadingParticle extends FlxParticle
     }
 }
 
-class ColorfulParticle extends FadingParticle
+class RandomSizeParticle extends FadingParticle
+{
+    public function new()
+    {
+        super();
+
+        var size = Std.random(4)+1;
+        scale = new FlxPoint(size, size);
+    }
+}
+
+class ColorfulParticle extends RandomSizeParticle
 {
     public function new()
     {
@@ -65,7 +77,7 @@ class InvaderExplosion extends FlxEmitter
         maxParticleSpeed = new FlxPoint(250,250);
         gravity = 500;
 
-        particleClass = FadingParticle;
+        particleClass = RandomSizeParticle;
 
         makeParticles("assets/images/particle-green.png", COUNT);
     }
@@ -89,7 +101,7 @@ class BombExplosion extends FlxEmitter
         maxParticleSpeed = new FlxPoint(250,0);
         gravity = 500;
 
-        particleClass = FadingParticle;
+        particleClass = RandomSizeParticle;
 
         makeParticles("assets/images/particle-blue.png", COUNT);
     }
@@ -110,7 +122,7 @@ class ShieldExplosion extends FlxEmitter
         super();
 
         minParticleSpeed = new FlxPoint(-50,0);
-        maxParticleSpeed = new FlxPoint(50,50);
+        maxParticleSpeed = new FlxPoint(50,100);
         gravity = 500;
 
         particleClass = FadingParticle;
@@ -121,7 +133,7 @@ class ShieldExplosion extends FlxEmitter
     public function goBoom(o : FlxObject)
     {
         at(o);
-        start(true, 1);
+        start(true, 0.25);
     }
 }
 
@@ -161,7 +173,7 @@ class BlockExplosion extends FlxEmitter
         maxParticleSpeed = new FlxPoint(150,0);
         gravity = 500;
 
-        particleClass = FadingParticle;
+        particleClass = RandomSizeParticle;
 
         makeParticles("assets/images/particle-red.png", COUNT);
     }

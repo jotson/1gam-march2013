@@ -5,6 +5,7 @@ import nme.geom.Rectangle;
 import nme.net.SharedObject;
 import nme.display.FPS;
 import nme.Lib;
+import nme.ui.Mouse;
 import org.flixel.FlxButton;
 import org.flixel.FlxG;
 import org.flixel.FlxPath;
@@ -23,7 +24,7 @@ class MenuScene extends FlxState
      
     public override function create():Void
     {
-        #if (flash || linux || mac || windows)
+        #if !android
         FlxG.mouse.show();
         #end
         

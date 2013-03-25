@@ -24,7 +24,7 @@ class GameScene extends FlxState
      
     public override function create():Void
     {
-        #if (flash || linux || mac || windows)
+        #if !android
         FlxG.mouse.show();
         #end
 

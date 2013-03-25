@@ -19,7 +19,11 @@ a {
     border-bottom: 1px dotted;
 }
 
-#cr-stage {
+#game {
+    text-align: center;
+}
+
+#cr-stage, #swf-stage {
     margin: 25px auto 0 auto;
     /*border: 3px dotted #333;*/
     background-color: #000;
@@ -27,7 +31,7 @@ a {
 
 /* Header */
 header {
-    margin: 25px 0;
+    margin: 25px 0 0 0;
 }
 
 header a {
@@ -48,6 +52,21 @@ header h2 {
     color: #ccc;
     text-transform: uppercase;
     font-size: 1em;
+}
+
+header .versions {
+    text-align: center;
+    font-size: 0.8em;
+    margin: 10px 0;
+}
+
+header .versions a {
+    color: #f00;
+}
+
+header .versions a.selected {
+    border-bottom: none;
+    color: #fff;
 }
 
 /* Instructions */

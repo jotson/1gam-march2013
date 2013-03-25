@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<head>  
+    <meta charset='utf-8'>
+    <title>Reverse Invaders | #1gam March 2013</title>
+    <link href="assets/css/styles.css?v=b6f7a68" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="lib/crafty.js?v=b6f7a68"></script>
+    <script type="text/javascript" src="source/global.js?v=b6f7a68"></script>
+    <script type="text/javascript" src="source/things_invaders_say.js?v=b6f7a68"></script>
+    <script type="text/javascript" src="source/scenes.js?v=b6f7a68"></script>
+    <script type="text/javascript" src="source/components.js?v=b6f7a68"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Reverse Invaders</h1>
+        <h2>
+            <a href="http://flagrantdisregard.com">John Watson</a> —
+            <a href="http://onegameamonth.com">#1gam</a> March 2013
+        </h2>
+
+        <section class="instructions">
+            <h1>—INSTRUCTIONS—</h1>
+            <p>The puny humans are trying to destroy our Peace And Truth Liberation Fleet!</p>
+            <p>Activate shields by moving the mouse pointer over a ship. Land at all costs!</p>
+        </section>
+
+        <!-- <section class="versions">
+            <a href="?html5" id="html5link">Play HTML version</a>
+            |
+            <a href="?flash" id="flashlink">Play Flash version</a>
+            |
+            <a href="ReverseInvaders.apk">Download Android APK (Built with NME.io)</a>
+        </section> -->
+    </header>
+
+    <div id="game">
+        <div id="cr-stage"></div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(
+            function() {
+                var url = window.location.href;
+                var mode = url.substr(url.indexOf('?')+1);
+                if (mode == 'flash') {
+                    flash();
+                } else {
+                    html5();
+                }
+            }
+        );
+
+        function html5() {
+            $('.versions a').removeClass('selected');
+            $('#html5link').addClass('selected');
+
+            $(window).focus(function() {
+                if (Crafty.isPaused()) Crafty.pause();
+                Crafty.audio.unmute();
+            });
+
+            $(window).blur(function() {
+                if (!Crafty.isPaused()) Crafty.pause();
+                Crafty.audio.mute();
+            });
+
+            Crafty.init(STAGE_W, STAGE_H);
+            Crafty.scene("loading");
+        }
+
+        function flash() {
+            $('.versions a').removeClass('selected');
+            $('#flashlink').addClass('selected');
+
+            swfobject.embedSWF("ReverseInvaders.swf", "cr-stage", "800px", "500px", "11");
+        }
+    </script>
+
+    <footer>
+        <p>
+            Powered by <a href="http://craftyjs.com">Crafty</a>
+            — Inspired by Space Invaders by <a href="http://www.taito.com/">Taito</a>
+            — <a href="https://github.com/jotson/1gam-march2013">Source code</a>
+        </p>
+
+        <p>
+            — Sound effects —<br>
+
+            <a href="http://freesound.org/people/2887679652/sounds/171475/">Gun sounds by 2887679652</a> (CC-BY)<br>
+            <a href="http://freesound.org/people/1stWebArmy/sounds/112478/">War sounds by 1stWebArmy</a> (CC-BY)<br>
+            <a href="http://freesound.org/people/roper1911/sounds/155790/">Railgun by roper1911</a> (CC-0)<br>
+            <a href="http://freesound.org/people/steveygos93/sounds/80400/">Explosions by steveygos93</a> (CC-BY)<br>
+            <a href="http://freesound.org/people/Portbot/sounds/171787/">Crash by Portbot</a> (CC-0)<br>
+            <a href="http://freesound.org/people/cedarstudios/sounds/148840/">Ricochet by cedarstudios</a> (CC-0)<br>
+       </p>
+    </footer>
+</body>
+</html>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
     <meta title="Reverse Invaders" package="com.happyshiny.invaders" version="1.0.0" company="Happy Shiny" />
-    <app main="com.happyshiny.invaders.ReverseInvaders" file="ReverseInvaders" path="build" />
+    <app main="com.happyshiny.invaders.ReverseInvaders" file="ReverseInvaders" path="build" swf-version="11.2" />
     
-    <window width="1280" height="800" orientation="landscape" fullscreen="true" background="0x000000" />
+    <window width="800" height="500" orientation="landscape" resizable="true" background="0x000000" />
 
     <source path="source" />
 
