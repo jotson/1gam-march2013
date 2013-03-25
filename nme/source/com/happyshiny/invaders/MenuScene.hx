@@ -80,6 +80,11 @@ class MenuScene extends FlxState
         super.update();
 
         #if !android
+        if (FlxG.keys.justPressed("SPACE"))
+        {
+            FlxG.switchState(new GameScene());
+        }
+
         if (FlxG.keys.justPressed("ESCAPE"))
         {
             Lib.exit();

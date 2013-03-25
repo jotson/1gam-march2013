@@ -1,13 +1,12 @@
 package com.happyshiny.invaders;
 
+import com.happyshiny.invaders.Particles;
 import org.flixel.system.input.FlxTouchManager;
-import org.flixel.tweens.misc.ColorTween;
 import org.flixel.FlxSprite;
 import org.flixel.FlxPoint;
 import org.flixel.FlxGroup;
 import org.flixel.FlxState;
 import org.flixel.FlxG;
-import nme.filters.GlowFilter;
 import nme.Lib;
 
 class InvaderGroup extends FlxGroup
@@ -259,19 +258,27 @@ class Bomb extends FlxSprite
     {
         super.update();
 
+        // Collisions
         FlxG.overlap(Helper.bombGroup, Helper.blockGroup, function(bomb, block) {
+            var explosion = cast(FlxG.state.recycle(BlockExplosion), BlockExplosion);
+            explosion.goBoom(block);
+
             bomb.kill();
             block.kill();
         });
 
         FlxG.overlap(Helper.bombGroup, Helper.human, function(bomb, human) {
+            var explosion = cast(FlxG.state.recycle(HumanExplosion), HumanExplosion);
+            explosion.goBoom(human);
+
             bomb.kill();
             human.hurt(0);
         });
 
         if (y > FlxG.height)
         {
-            // TODO Explosion
+            var explosion = cast(FlxG.state.recycle(BombExplosion), BombExplosion);
+            explosion.goBoom(this);
             kill();
         }
     }
@@ -281,7 +288,6 @@ class Shield extends FlxSprite
 {
     public var parent : Invader = null;
     private var lifetime = 2.0; // seconds
-    private var tween : ColorTween = null;
     private var z = 200;
 
     public function new()

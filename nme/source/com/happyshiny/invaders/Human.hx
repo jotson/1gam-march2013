@@ -4,7 +4,11 @@ import org.flixel.FlxSprite;
 import org.flixel.FlxState;
 import org.flixel.FlxG;
 import org.flixel.FlxObject;
+import org.flixel.FlxEmitter;
+import org.flixel.FlxParticle;
+import org.flixel.FlxPoint;
 import com.happyshiny.invaders.InvaderGroup;
+import com.happyshiny.invaders.Particles;
 import nme.Lib;
 
 class Human extends FlxSprite
@@ -16,9 +20,13 @@ class Human extends FlxSprite
     private var fastMode : Bool = false;
     private var frozen : Bool = false;
 
+    private var invaderExplosion : InvaderExplosion;
+
     public function new()
     {
         super();
+
+        invaderExplosion = new InvaderExplosion();
 
         width = 50;
         height = 50;
@@ -34,22 +42,35 @@ class Human extends FlxSprite
     {
         super.update();
 
+        // Collisions
         FlxG.overlap(Helper.missileGroup, Helper.blockGroup, function(missile, block) {
+            var explosion = cast(FlxG.state.recycle(BlockExplosion), BlockExplosion);
+            explosion.goBoom(block);
+
             missile.kill();
             block.kill();
         });
         
         FlxG.overlap(Helper.missileGroup, Helper.invaderGroup, function(missile, invader) {
+            var explosion = cast(FlxG.state.recycle(InvaderExplosion), InvaderExplosion);
+            explosion.goBoom(invader);
+
             missile.kill();
             invader.kill();
         });
         
         FlxG.overlap(Helper.missileGroup, Helper.bombGroup, function(missile, bomb) {
+            var explosion = cast(FlxG.state.recycle(BlockExplosion), BlockExplosion);
+            explosion.goBoom(bomb);
+
             missile.kill();
             bomb.kill();
         });
         
         FlxG.overlap(Helper.missileGroup, Helper.shieldGroup, function(missile, shield) {
+            var explosion = cast(FlxG.state.recycle(ShieldExplosion), ShieldExplosion);
+            explosion.goBoom(missile);
+
             missile.kill();
         });
         

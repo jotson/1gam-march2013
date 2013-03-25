@@ -51,9 +51,9 @@ class GameScene extends FlxState
         add(Helper.invaderGroup);
 
         // Bunkers
-        createBunker(175, 400);
-        createBunker(400, 400);
-        createBunker(625, 400);
+        createBunker(Math.floor(FlxG.width/2) - 200, 400);
+        createBunker(Math.floor(FlxG.width/2), 400);
+        createBunker(Math.floor(FlxG.width/2) + 200, 400);
 
         // Human
         Helper.human = new Human();
@@ -98,11 +98,14 @@ class GameScene extends FlxState
             width = Math.ceil(Math.max(width, shape[yy].length * Block.SIZE));
         }
 
-        for(yy in 0...shape.length) {
+        for(yy in 0...shape.length)
+        {
             var row = shape[yy];
-            for(xx in 0...row.length) {
-                if (row.charAt(xx) == '*') {
-                    Helper.blockGroup.add(new Block(x + xx * Block.SIZE - Math.floor(width/2), y + yy * Block.SIZE));
+            for(xx in 0...row.length)
+            {
+                if (row.charAt(xx) == '*')
+                {
+                    Helper.blockGroup.add(new Block(x + xx * Block.SIZE - width/2, y + yy * Block.SIZE));
                 }
             }
         }
