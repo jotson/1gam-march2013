@@ -23,9 +23,9 @@ class MenuScene extends FlxState
         // Keyboard events
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 
-        FlxG.destroySounds(true);
-        Reg.play("assets/music/artillery.mp3", 1.0, true);
-        // Reg.play("assets/music/war-sounds.mp3", 0.5, true);
+        SoundManager.stop();
+        SoundManager.play("artillery", 1.0);
+        SoundManager.play("warsounds", 0.5);
 
         // Starfield
         add(new Starfield(200));

@@ -33,9 +33,13 @@ class Human extends FlxSprite
 
         loadGraphic("assets/images/human.png", true, true, 50, 50);
 
+        x = FlxG.width/2 - width/2;
         y = FlxG.height - height/2;
 
-        changeDirection();
+        freeze();
+        
+        shotTimer = 5;
+        dirTimer = 3;
     }
 
     public override function update()
@@ -231,6 +235,8 @@ class Missile extends FlxSprite
             var explosion = cast(FlxG.state.recycle(ShieldExplosion), ShieldExplosion);
             explosion.goBoom(this);
 
+            SoundManager.play("ricochet");
+
             kill();
         }
         
@@ -239,5 +245,7 @@ class Missile extends FlxSprite
     public override function revive()
     {
         super.revive();
+
+        SoundManager.play("railgun");
     }
 }

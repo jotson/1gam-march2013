@@ -12,7 +12,40 @@
     
     <icon path="assets/images/icon.svg" />
 
-    <assets path="assets" include="*" />
+    <assets path="assets/data" />
+    <assets path="assets/images" />
+    <assets path="assets/fonts" />
+
+    <set name="mp3" if="android" />
+    <set name="mp3" if="flash" />
+
+    <assets path="assets/sounds" unless="mp3">
+        <sound path="crash.wav" id="crash" />
+        <sound path="explosion1.wav" id="explosion1" />
+        <sound path="explosion2.wav" id="explosion2" />
+        <sound path="railgun.wav" id="railgun" />
+        <sound path="ricochet1.wav" id="ricochet1" />
+        <sound path="ricochet2.wav" id="ricochet2" />
+        <sound path="ricochet3.wav" id="ricochet3" />
+        <sound path="ricochet4.wav" id="ricochet4" />
+        <sound path="war-sounds.wav" id="warsounds" />
+        <sound path="music.wav" id="music" />
+        <sound path="artillery.wav" id="artillery" />
+    </assets>
+
+    <assets path="assets/sounds" if="mp3">
+        <sound path="crash.mp3" id="crash" />
+        <sound path="explosion1.mp3" id="explosion1" />
+        <sound path="explosion2.mp3" id="explosion2" />
+        <sound path="railgun.mp3" id="railgun" />
+        <sound path="ricochet1.mp3" id="ricochet1" />
+        <sound path="ricochet2.mp3" id="ricochet2" />
+        <sound path="ricochet3.mp3" id="ricochet3" />
+        <sound path="ricochet4.mp3" id="ricochet4" />
+        <sound path="war-sounds.mp3" id="warsounds" />
+        <sound path="music.mp3" id="music" />
+        <sound path="artillery.mp3" id="artillery" />
+    </assets>
 
     <!-- <certificate />
         Use the certificate node to release-sign Android or BlackBerry applications.

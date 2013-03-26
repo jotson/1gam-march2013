@@ -43,3 +43,4 @@ About Haxe, NME, and HaxeFlixel
 - NME and HaxeFlixel docs aren't great.
 - Source for HaxeFlixel and NME is on Github.
 - HaxeFlixel manages scaling of your game to different screen sizes for you. You just need to set the game size when you init the Engine and then keep track of the game size in the HXP.screen.width and HXP.screen.height.
+- NME always treats .mp3 files as MUSIC on some platforms (SDL) -- better to use WAVs

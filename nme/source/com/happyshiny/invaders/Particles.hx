@@ -79,6 +79,8 @@ class InvaderExplosion extends FlxEmitter
     {
         at(o);
         start(true, 0.5);
+
+        SoundManager.play("explosion1");
     }
 }
 
@@ -103,6 +105,8 @@ class BombExplosion extends FlxEmitter
     {
         at(o);
         start(true, 1);
+
+        SoundManager.play("explosion1", 1.0);
     }
 }
 
@@ -127,6 +131,8 @@ class ShieldExplosion extends FlxEmitter
     {
         at(o);
         start(true, 0.25);
+
+        SoundManager.play("ricochet");
     }
 }
 
@@ -151,6 +157,8 @@ class HumanExplosion extends FlxEmitter
     {
         at(o);
         start(true, 1);
+
+        SoundManager.play("explosion1");
     }
 }
 
@@ -175,5 +183,7 @@ class BlockExplosion extends FlxEmitter
     {
         at(o);
         start(true, 1);
+
+        SoundManager.play("explosion2");
     }
 }
