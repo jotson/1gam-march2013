@@ -3,9 +3,9 @@ package com.happyshiny.invaders;
 import nme.Assets;
 import nme.geom.Rectangle;
 import nme.net.SharedObject;
-import nme.display.FPS;
 import nme.Lib;
 import nme.ui.Mouse;
+import nme.events.KeyboardEvent;
 import org.flixel.FlxButton;
 import org.flixel.FlxG;
 import org.flixel.FlxPath;
@@ -17,24 +17,15 @@ import org.flixel.FlxU;
 
 class MenuScene extends FlxState
 {
-    public function new()
-    {
-        super();
-    }
-     
     public override function create():Void
     {
-        #if !android
-        FlxG.mouse.show();
-        #end
         
-        // Frame rate display
-        var fps = new FPS(0, 0, 0xff0000);
-        Lib.stage.addChild(fps);
+        // Keyboard events
+        Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 
         FlxG.destroySounds(true);
-        Helper.play("assets/music/artillery.mp3", 1.0, true);
-        // Helper.play("assets/music/war-sounds.mp3", 0.5, true);
+        Reg.play("assets/music/artillery.mp3", 1.0, true);
+        // Reg.play("assets/music/war-sounds.mp3", 0.5, true);
 
         // Starfield
         add(new Starfield(200));
@@ -47,23 +38,21 @@ class MenuScene extends FlxState
             .setFormat("assets/fonts/Offside-Regular.ttf", 20, 0xff0000, "center", 0, false));
 
         // Groups for collision detection
-        Helper.setupGroups();
-        add(Helper.bombGroup);
-        add(Helper.missileGroup);
-        add(Helper.blockGroup);
-        add(Helper.shieldGroup);
+        Reg.setupGroups();
+        add(Reg.bombGroup);
+        add(Reg.missileGroup);
+        add(Reg.blockGroup);
+        add(Reg.shieldGroup);
 
         // Invaders
-        Helper.invaderGroup = new InvaderGroup(130, 0, true);
-        add(Helper.invaderGroup);
+        Reg.invaderGroup = new InvaderGroup(130, 0, true);
+        add(Reg.invaderGroup);
 
         // Buttons
         #if (flash || html)
-        add(new Button(FlxG.width/2, 350, "assets/images/play-button.png",
-                        function() { FlxG.switchState(new GameScene()); }));
+        add(new Button(FlxG.width/2, 350, "assets/images/play-button.png", startGame));
         #else
-        add(new Button(FlxG.width/2 - 100, 350, "assets/images/play-button.png",
-                        function() { FlxG.switchState(new GameScene()); }));
+        add(new Button(FlxG.width/2 - 100, 350, "assets/images/play-button.png", startGame));
         add(new Button(FlxG.width/2 + 100, 350, "assets/images/quit-button.png",
                         function() { Lib.exit(); }));
         #end
@@ -71,25 +60,36 @@ class MenuScene extends FlxState
         // TODO Sound on/off button
     }
     
+    public function startGame()
+    {
+        FlxG.switchState(new GameScene());
+    }
+
+    public function onKeyUp(e : KeyboardEvent):Void
+    {
+        // Space bar
+        if (e.keyCode == 32)
+        {
+            startGame();
+        }
+
+        // Escape key (also Android back button)
+        if (e.keyCode == 27)
+        {
+            Lib.exit();
+        }
+    }
+
     public override function destroy():Void
     {
+        Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+        kill();
+
         super.destroy();
     }
 
     public override function update():Void
     {
         super.update();
-
-        #if !android
-        if (FlxG.keys.justPressed("SPACE"))
-        {
-            FlxG.switchState(new GameScene());
-        }
-
-        if (FlxG.keys.justPressed("ESCAPE"))
-        {
-            Lib.exit();
-        }
-        #end
     }   
 }

@@ -6,7 +6,7 @@ import org.flixel.FlxState;
 import nme.media.Sound;
 import nme.media.SoundTransform;
 
-class Helper {
+class Reg {
     public static var bombGroup : FlxGroup = null;
     public static var missileGroup : FlxGroup = null;
     public static var invaderGroup : InvaderGroup = null;
@@ -57,7 +57,7 @@ class Helper {
 
     public static function isClass(o, className : String) : Bool
     {
-        if (Helper.getClass(o) == className)
+        if (Reg.getClass(o) == className)
         {
             return true;
         }

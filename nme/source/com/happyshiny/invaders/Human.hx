@@ -43,7 +43,7 @@ class Human extends FlxSprite
         super.update();
 
         // Collisions
-        FlxG.overlap(Helper.missileGroup, Helper.blockGroup, function(missile, block) {
+        FlxG.overlap(Reg.missileGroup, Reg.blockGroup, function(missile, block) {
             var explosion = cast(FlxG.state.recycle(BlockExplosion), BlockExplosion);
             explosion.goBoom(block);
 
@@ -51,7 +51,7 @@ class Human extends FlxSprite
             block.kill();
         });
         
-        FlxG.overlap(Helper.missileGroup, Helper.invaderGroup, function(missile, invader) {
+        FlxG.overlap(Reg.missileGroup, Reg.invaderGroup, function(missile, invader) {
             var explosion = cast(FlxG.state.recycle(InvaderExplosion), InvaderExplosion);
             explosion.goBoom(invader);
 
@@ -59,7 +59,7 @@ class Human extends FlxSprite
             invader.kill();
         });
         
-        FlxG.overlap(Helper.missileGroup, Helper.bombGroup, function(missile, bomb) {
+        FlxG.overlap(Reg.missileGroup, Reg.bombGroup, function(missile, bomb) {
             var explosion = cast(FlxG.state.recycle(BlockExplosion), BlockExplosion);
             explosion.goBoom(bomb);
 
@@ -67,7 +67,7 @@ class Human extends FlxSprite
             bomb.kill();
         });
         
-        FlxG.overlap(Helper.missileGroup, Helper.shieldGroup, function(missile, shield) {
+        FlxG.overlap(Reg.missileGroup, Reg.shieldGroup, function(missile, shield) {
             var explosion = cast(FlxG.state.recycle(ShieldExplosion), ShieldExplosion);
             explosion.goBoom(missile);
 
@@ -123,11 +123,11 @@ class Human extends FlxSprite
             narrowRect.height = FlxG.height;
 
             canFire = false;
-            for(i in 0...Helper.invaderGroup.length)
+            for(i in 0...Reg.invaderGroup.length)
             {
-                if (Helper.isClass(Helper.invaderGroup.members[i], "com.happyshiny.invaders.Invader"))
+                if (Reg.isClass(Reg.invaderGroup.members[i], "com.happyshiny.invaders.Invader"))
                 {
-                    var invader = cast(Helper.invaderGroup.members[i], Invader);
+                    var invader = cast(Reg.invaderGroup.members[i], Invader);
                     if (!invader.alive) continue;
                     
                     // Use a 200px wide ray to test if we're under an invader
@@ -139,11 +139,11 @@ class Human extends FlxSprite
                 }
             }
 
-            for(i in 0...Helper.blockGroup.length)
+            for(i in 0...Reg.blockGroup.length)
             {
-                if (Helper.isClass(Helper.blockGroup.members[i], "com.happyshiny.invaders.Block"))
+                if (Reg.isClass(Reg.blockGroup.members[i], "com.happyshiny.invaders.Block"))
                 {
-                    var block = cast(Helper.blockGroup.members[i], Block);
+                    var block = cast(Reg.blockGroup.members[i], Block);
                     if (!block.visible) continue;
 
                     // Use a narrow ray to test if we're under a block
@@ -158,7 +158,7 @@ class Human extends FlxSprite
             }
 
             if (canFire) {
-                var m : Missile = cast(Helper.missileGroup.recycle(Missile), Missile);
+                var m : Missile = cast(Reg.missileGroup.recycle(Missile), Missile);
                 if (m != null)
                 {
                     m.x = x + width/2;

@@ -25,7 +25,7 @@ class InvaderGroup extends FlxGroup
     {
         super();
 
-        Helper.invaderGroup = this;
+        Reg.invaderGroup = this;
 
         for(i in 0...11)
         {
@@ -74,7 +74,7 @@ class InvaderGroup extends FlxGroup
                 if (descend != 0) speed += 5;
                 for(i in 0...length)
                 {
-                    if (!Helper.isClass(members[i], "com.happyshiny.invaders.Invader")) continue;
+                    if (!Reg.isClass(members[i], "com.happyshiny.invaders.Invader")) continue;
                     var invader = cast(members[i], Invader);
                     if (invader.alive) invader.updateMovement(descend);
                 }
@@ -82,7 +82,7 @@ class InvaderGroup extends FlxGroup
 
             if (bottomEdge.y + bottomEdge.height >= FlxG.height)
             {
-                Helper.invadersWin();
+                Reg.invadersWin();
             }
         }
     }
@@ -95,7 +95,7 @@ class InvaderGroup extends FlxGroup
 
         for(i in 0...length)
         {
-            if (!Helper.isClass(members[i], "com.happyshiny.invaders.Invader")) continue;
+            if (!Reg.isClass(members[i], "com.happyshiny.invaders.Invader")) continue;
             var invader = cast(members[i], Invader);
             if (invader.alive)
             {
@@ -116,7 +116,7 @@ class InvaderGroup extends FlxGroup
         }
 
         if (length == 0) {
-            Helper.humansWin();
+            Reg.humansWin();
         }
     }
 }
@@ -199,7 +199,7 @@ class Invader extends FlxSprite
                     if (overlapsPoint(point) && !hasShield)
                     {
                         hasShield = true;
-                        var shield : Shield = cast(Helper.shieldGroup.recycle(Shield), Shield);
+                        var shield : Shield = cast(Reg.shieldGroup.recycle(Shield), Shield);
                         shield.parent = this;
                         shield.revive();
                     }
@@ -211,13 +211,13 @@ class Invader extends FlxSprite
     public function updateMovement(y : Float)
     {
         this.y += y;
-        velocity.x = Helper.invaderGroup.dir * Helper.invaderGroup.speed;
+        velocity.x = Reg.invaderGroup.dir * Reg.invaderGroup.speed;
     }
 
     public function bomb()
     {
         if (Std.random(50) == 0) {
-            var bomb = Helper.bombGroup.recycle(Bomb);
+            var bomb = Reg.bombGroup.recycle(Bomb);
             if (bomb != null)
             {
                 var bomb : Bomb = cast(bomb, Bomb);
@@ -237,7 +237,7 @@ class Invader extends FlxSprite
     {
         super.kill();
 
-        Helper.invaderGroup.findEdges();
+        Reg.invaderGroup.findEdges();
     }
 }
 
@@ -269,7 +269,7 @@ class Bomb extends FlxSprite
         super.update();
 
         // Collisions
-        FlxG.overlap(Helper.bombGroup, Helper.blockGroup, function(bomb, block) {
+        FlxG.overlap(Reg.bombGroup, Reg.blockGroup, function(bomb, block) {
             var explosion = cast(FlxG.state.recycle(BlockExplosion), BlockExplosion);
             explosion.goBoom(block);
 
@@ -277,7 +277,7 @@ class Bomb extends FlxSprite
             block.kill();
         });
 
-        FlxG.overlap(Helper.bombGroup, Helper.human, function(bomb, human) {
+        FlxG.overlap(Reg.bombGroup, Reg.human, function(bomb, human) {
             var explosion = cast(FlxG.state.recycle(HumanExplosion), HumanExplosion);
             explosion.goBoom(human);
 

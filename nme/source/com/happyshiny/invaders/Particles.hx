@@ -21,6 +21,10 @@ class FadingParticle extends FlxParticle
     {
         super.onEmit();
 
+        var size = Std.random(2)+1;
+        scale = new FlxPoint(size, size);
+        angularVelocity = Std.random(1440)-720;
+
         FlxG.tween(this, { alpha: 0 }, lifespan);
     }
 
@@ -32,18 +36,7 @@ class FadingParticle extends FlxParticle
     }
 }
 
-class RandomSizeParticle extends FadingParticle
-{
-    public function new()
-    {
-        super();
-
-        var size = Std.random(4)+1;
-        scale = new FlxPoint(size, size);
-    }
-}
-
-class ColorfulParticle extends RandomSizeParticle
+class ColorfulParticle extends FadingParticle
 {
     public function new()
     {
@@ -67,7 +60,7 @@ class ColorfulParticle extends RandomSizeParticle
 
 class InvaderExplosion extends FlxEmitter
 {
-    var COUNT = 50;
+    var COUNT = 25;
 
     public function new()
     {
@@ -77,7 +70,7 @@ class InvaderExplosion extends FlxEmitter
         maxParticleSpeed = new FlxPoint(250,250);
         gravity = 500;
 
-        particleClass = RandomSizeParticle;
+        particleClass = FadingParticle;
 
         makeParticles("assets/images/particle-green.png", COUNT);
     }
@@ -101,7 +94,7 @@ class BombExplosion extends FlxEmitter
         maxParticleSpeed = new FlxPoint(250,0);
         gravity = 500;
 
-        particleClass = RandomSizeParticle;
+        particleClass = FadingParticle;
 
         makeParticles("assets/images/particle-blue.png", COUNT);
     }
@@ -115,7 +108,7 @@ class BombExplosion extends FlxEmitter
 
 class ShieldExplosion extends FlxEmitter
 {
-    var COUNT = 25;
+    var COUNT = 10;
 
     public function new()
     {
@@ -173,7 +166,7 @@ class BlockExplosion extends FlxEmitter
         maxParticleSpeed = new FlxPoint(150,0);
         gravity = 500;
 
-        particleClass = RandomSizeParticle;
+        particleClass = FadingParticle;
 
         makeParticles("assets/images/particle-red.png", COUNT);
     }

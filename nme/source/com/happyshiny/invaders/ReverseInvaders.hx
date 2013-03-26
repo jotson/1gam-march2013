@@ -5,6 +5,7 @@ import nme.display.StageAlign;
 import nme.display.StageScaleMode;
 import nme.display.Sprite;
 import nme.events.Event;
+import nme.display.FPS;import nme.display.FPS;
 import nme.Lib;
 import org.flixel.FlxGame;
 import org.flixel.system.FlxDebugger;
@@ -31,8 +32,16 @@ class ReverseInvaders extends Sprite
         }
         
         initialize();
-        
+
         addChild(new Game());
+
+        #if !android
+        FlxG.mouse.show();
+        #end
+
+        // Frame rate display
+        var fps = new FPS(0, 0, 0xff0000);
+        Lib.current.stage.addChild(fps);
 
         // FlxG.debug = true;
         // FlxG.log("Game starting");
