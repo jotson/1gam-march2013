@@ -27,12 +27,8 @@ class MenuScene extends FlxState
         // Starfield
         add(new Starfield(200));
 
-        // Titles
-        // TODO Graphic titles
-        add(new FlxText(0, 10, FlxG.width, "Reverse Invaders")
-            .setFormat("assets/fonts/Offside-Regular.ttf", 50, 0xff0000, "center", 0, false));
-        add(new FlxText(0, 70, FlxG.width, "John Watson")
-            .setFormat("assets/fonts/Offside-Regular.ttf", 20, 0xff0000, "center", 0, false));
+        // Title
+        add(new FlxSprite(56, 25, "assets/images/title.png"));
 
         // Groups for collision detection
         Reg.setupGroups();
@@ -42,7 +38,7 @@ class MenuScene extends FlxState
         add(Reg.shieldGroup);
 
         // Invaders
-        Reg.invaderGroup = new InvaderGroup(130, 0, true);
+        Reg.invaderGroup = new InvaderGroup(160, 0, true);
         add(Reg.invaderGroup);
 
         // Buttons

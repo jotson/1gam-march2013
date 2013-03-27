@@ -13,6 +13,8 @@ import org.flixel.FlxSprite;
 import org.flixel.FlxGroup;
 import org.flixel.FlxState;
 import org.flixel.FlxText;
+import org.flixel.tweens.FlxTween;
+import org.flixel.tweens.util.Ease;
 import org.flixel.FlxU;
 
 class GameScene extends FlxState
@@ -41,6 +43,12 @@ class GameScene extends FlxState
         // Invaders
         Reg.invaderGroup = new InvaderGroup(50, 50 * 0.3, false);
         add(Reg.invaderGroup);
+
+        // Get ready!
+        var getready = new FlxSprite(259, FlxG.height/2 - 100, "assets/images/getready.png");
+        FlxG.tween(getready, { alpha: 0.2 }, 0.5, { type: FlxTween.PINGPONG, ease: Ease.quadInOut });
+        FlxG.tween(getready, { x: getready.x }, 5, { complete: getready.kill });
+        add(getready);
 
         // Bunkers
         createBunker(Math.floor(FlxG.width/2) - 200, 400);

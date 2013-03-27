@@ -123,54 +123,20 @@ class Human extends FlxSprite
 
         if (!this.frozen) {
             var canFire = false;
-            var center = x + this.width/2;
+            var C = x + width/2;
 
-            var wideRect = new FlxObject();
-            wideRect.x = center-100;
-            wideRect.y = 0;
-            wideRect.width = 200;
-            wideRect.height = FlxG.height;
+            var rect = new FlxSprite(C, 0);
+            rect.height = FlxG.height;
 
-            var narrowRect = new FlxObject();
-            narrowRect.x = center-5;
-            narrowRect.y = 0;
-            narrowRect.width = 10;
-            narrowRect.height = FlxG.height;
+            // Use a wide ray to look for invaders
+            rect.x = C-100;
+            rect.width = 200;
+            if (FlxG.overlap(Reg.invaderGroup, rect)) canFire = true;
 
-            canFire = false;
-            for(i in 0...Reg.invaderGroup.length)
-            {
-                if (Reg.isClass(Reg.invaderGroup.members[i], "com.happyshiny.invaders.Invader"))
-                {
-                    var invader = cast(Reg.invaderGroup.members[i], Invader);
-                    if (!invader.alive) continue;
-                    
-                    // Use a 200px wide ray to test if we're under an invader
-                    if (FlxG.overlap(invader, wideRect))
-                    {
-                        canFire = true;
-                        break;
-                    }
-                }
-            }
-
-            for(i in 0...Reg.blockGroup.length)
-            {
-                if (Reg.isClass(Reg.blockGroup.members[i], "com.happyshiny.invaders.Block"))
-                {
-                    var block = cast(Reg.blockGroup.members[i], Block);
-                    if (!block.visible) continue;
-
-                    // Use a narrow ray to test if we're under a block
-                    // Only test a sample of all of the blocks
-                    if (Std.random(5) != 0) continue;
-                    if (FlxG.overlap(block, narrowRect))
-                    {
-                        canFire = false;
-                        break;
-                    }
-                }
-            }
+            // Use a narrow ray to look for blocks
+            rect.x = C-2;
+            rect.width = 4;
+            if (FlxG.overlap(Reg.blockGroup, rect)) canFire = false;
 
             if (canFire) {
                 var m : Missile = cast(Reg.missileGroup.recycle(Missile), Missile);
