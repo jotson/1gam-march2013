@@ -17,6 +17,26 @@ The game should run in most modern browsers. I've only tested it in Chrome and F
 
 Move the mouse pointer over ships to activate their shields. Try to block incoming missiles and land as many ships on the surface as possible.
 
+# Build instructions
+
+The js version has no requirements and doesn't technically need a build. Just run the index.html file in the js folder.
+
+The nme version requires [nme](http://nme.io). Once that is installed, you will also need to install the flixel library:
+
+`haxelib install flixel`
+
+./build.sh is a bash script that I used during development to test various targets. For example, `./build.sh flash` will build and run a debug version of the flash target.
+
+./build.sh also builds the [HTML page](http://flagrantdisregard.com) by
+combining the template /index.html, js, and nme builds into a single folder. Run that with `./build.sh html`.
+
+You can also simply cd to the nme folder and compile with nme directly:
+
+`nme build flash`
+`nme build linux`
+
+etc.
+
 # Dev Notes
 
 - The js/ folder contains a Javascript implementation of the game built with [Crafty](http://craftyjs.com)

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<head>  
+    <meta charset='utf-8'>
+    <title>Reverse Invaders | #1gam March 2013</title>
+    <link href="assets/css/styles.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="lib/crafty.js"></script>
+    <script type="text/javascript" src="source/global.js"></script>
+    <script type="text/javascript" src="source/things_invaders_say.js"></script>
+    <script type="text/javascript" src="source/scenes.js"></script>
+    <script type="text/javascript" src="source/components.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+</head>
+
+<body>
+    <div id="game">
+        <div id="cr-stage"></div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(
+            function() {
+                $(window).focus(function() {
+                    if (Crafty.isPaused()) Crafty.pause();
+                    Crafty.audio.unmute();
+                });
+
+                $(window).blur(function() {
+                    if (!Crafty.isPaused()) Crafty.pause();
+                    Crafty.audio.mute();
+                });
+
+                Crafty.init(STAGE_W, STAGE_H);
+                Crafty.scene("loading");
+            }
+        );
+    </script>
+</body>
+</html>
