@@ -23,7 +23,8 @@ a {
     text-align: center;
 }
 
-#cr-stage, #swf-stage {
+#cr-stage {
+    text-align: left;
     margin: 25px auto 0 auto;
     /*border: 3px dotted #333;*/
     background-color: #000;

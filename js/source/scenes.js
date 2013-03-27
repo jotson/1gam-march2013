@@ -57,7 +57,15 @@ Crafty.scene("loading", function() {
     });
 
     Crafty.sprite(1, "assets/images/background.png", {
-        background: [0, 0, 700, 500]
+        background: [0, 0, 800, 500]
+    });
+
+    Crafty.sprite(1, "assets/images/title.png", {
+        title: [0, 0, 687, 110]
+    });
+
+    Crafty.sprite(1, "assets/images/getready.png", {
+        getready: [0, 0, 282, 52]
     });
 
     // Sounds
@@ -107,6 +115,8 @@ Crafty.scene("loading", function() {
             "assets/images/ok-button.png",
             "assets/images/speech-bubble.png",
             "assets/images/background.png",
+            "assets/images/title.png",
+            "assets/images/getready.png",
         ],
 
         function() {
@@ -141,9 +151,9 @@ Crafty.scene("menu", function() {
     Crafty.e("starfield");
 
     // Invaders
-    var yOffset = 50;
-    var xOffset = 75;
-    for (y = 0; y < INVADER_ROWS; y++) {
+    var yOffset = 60;
+    var xOffset = STAGE_W/2 - 11*INVADER_WIDTH/2;
+    for (y = 2; y < INVADER_ROWS; y++) {
         for (x = 0; x < INVADER_COLS; x++) {
             ObjectPool.get('invader_sprite' + y + ', invader')
                 .attr({ x: xOffset + x * INVADER_WIDTH, y: yOffset + y * INVADER_HEIGHT })
@@ -151,8 +161,10 @@ Crafty.scene("menu", function() {
         }
     }
 
+    Crafty.e("2D, Canvas, title").attr({ x: 56, y: 25 });
+
     // Play button
-    var playButton = Crafty.e("button, play_btn").attr({ x: 300, y: 350, w: 100, h: 50 });
+    var playButton = Crafty.e("button, play_btn").attr({ x: 350, y: 350, w: 100, h: 50 });
     playButton.click = function() {
         Crafty.scene("playing");
     };
@@ -223,7 +235,7 @@ Crafty.scene("gameover", function() {
         .css({ 'text-align': 'center', 'font-family': FONTFACE, 'font-size': '20px', 'color': '#ff0000' })
         .text(invader_text);
 
-    var playButton = Crafty.e("button, ok_btn").attr({ x: 300, y: 150, w: 100, h: 50 });
+    var playButton = Crafty.e("button, ok_btn").attr({ x: 350, y: 150, w: 100, h: 50 });
     playButton.click = function() {
         Crafty.scene("menu");
     };
@@ -245,9 +257,9 @@ Crafty.scene("playing", function() {
     Crafty.e("starfield");
 
     // Create bunkers
-    createBunker(125, 400);
-    createBunker(350, 400);
-    createBunker(575, 400);
+    createBunker(STAGE_W/2-200, 400);
+    createBunker(STAGE_W/2, 400);
+    createBunker(STAGE_W/2+200, 400);
 
     // Add human to stage
     var h = Crafty.e("human");
@@ -273,10 +285,8 @@ Crafty.scene("playing", function() {
     }
 
     // Ready?
-    var msg = Crafty.e("2D, DOM, Text, Delay, Tween, blink");
-    msg.text("GET READY!");
-    msg.css({ 'color': '#ff0000', 'font-size': '36px', 'text-align': 'center', 'font-family': FONTFACE });
-    msg.attr({ w: STAGE_W, x: 0, y: 5 });
+    var msg = Crafty.e("2D, Canvas, Delay, Tween, blink, getready");
+    msg.attr({ x: 259, y: STAGE_H/2 - 100 });
     msg.delay(function() {
         msg.destroy();
 

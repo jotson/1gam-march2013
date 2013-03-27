@@ -23,7 +23,7 @@ SOFTWARE.
 
 var DEBUG = false;
 
-var STAGE_W = 700;
+var STAGE_W = 800;
 var STAGE_H = 500;
 var FONTFACE = 'Offside';
 
