@@ -19,6 +19,8 @@ Move the mouse pointer over ships to activate their shields. Try to block incomi
 
 # Build instructions
 
+This project can be compiled to Android, Flash, and Linux targets. It will probably also work with Mac and Windows targets but I haven't tested them. The js version works in Firefox and Chrome. It may work in IE and others but I haven't tested.
+
 The js version has no requirements and doesn't technically need a build. Just run the index.html file in the js folder.
 
 The nme version requires [nme](http://nme.io). Once that is installed, you will also need to install the flixel library:
