@@ -22,6 +22,18 @@ class Reg {
         shieldGroup = new FlxGroup();
     }
 
+    public static function clearStage()
+    {
+        FlxG.state.active = false;
+        FlxG.state.kill();
+        bombGroup = null;
+        missileGroup = null;
+        blockGroup = null;
+        shieldGroup = null;
+        invaderGroup = null;
+        human = null;
+    }
+
     public static function getClass(o)
     {
         var c = Type.getClass(o);
@@ -45,15 +57,5 @@ class Reg {
         {
             return false;
         }
-    }
-
-    public static function humansWin()
-    {
-
-    }
-
-    public static function invadersWin()
-    {
-
     }
 }

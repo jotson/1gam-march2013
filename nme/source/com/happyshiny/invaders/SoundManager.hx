@@ -39,12 +39,6 @@ class SoundManager {
         sound.play();
     }
 
-    public static function onSoundComplete(e)
-    {
-        trace("Sound complete");
-        trace(e);
-    } 
-
     /**
      * Stop a sound or all sounds
      * @param  id :             String sound id
@@ -52,7 +46,6 @@ class SoundManager {
      */
     public static function stop(id : String = null) : Void
     {
-        // TODO Stop sounds
     }
     
 }
@@ -101,6 +94,19 @@ class VariationMap {
 
         return s[channel];
     }
+
+    public function stop() : Void
+    {
+        // Stop playing all channels in all variations
+        for(id in sounds.keys())
+        {
+            var s = sounds.get(id);
+            for(sound in s)
+            {
+                sound.pause();
+            }
+        }
+    }
 }
 
 class MySound extends FlxSound
@@ -117,6 +123,13 @@ class MySound extends FlxSound
         // The _channel = null and _channel.stop() calls in FlxSound.cleanup()
         // kill sounds in SDL so, set ForceRestart to false.
         super.play(false);
+        // trace('Starting ' + id + ' ' + _channel);
+    }
+
+    public override function stop():Void
+    {
+        super.stop();
+        // trace('Stopping ' + id + ' ' + _channel);
     }
 
     override private function startSound(Position:Float):Void
@@ -129,10 +142,12 @@ class MySound extends FlxSound
         // so I can only guess that setting loops to 9999 helped with something...
         // maybe gapless looping.
         // if (_looped) trace("   Start Sound " + id + "_" + _looped + " " + _sound.length);
+        var numLoops = 0;
+        if (_looped) numLoops = 1;
         // if (_looped) return;
         _position = Position;
         _paused = false;
-        _channel = _sound.play(_position, 0, _transform); // was (_position, numLoops, _transform)
+        _channel = _sound.play(_position, numLoops, _transform); // was (_position, numLoops, _transform)
         if (_channel != null)
         {
             if (_channel.hasEventListener(Event.SOUND_COMPLETE))

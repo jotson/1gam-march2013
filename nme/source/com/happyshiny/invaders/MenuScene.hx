@@ -19,12 +19,11 @@ class MenuScene extends FlxState
 {
     public override function create():Void
     {
-        
         // Keyboard events
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 
         SoundManager.stop();
-        SoundManager.play("artillery", 1.0);
+        // SoundManager.play("artillery", 1.0);
         SoundManager.play("warsounds", 0.5);
 
         // Starfield
@@ -62,6 +61,7 @@ class MenuScene extends FlxState
     
     public function startGame()
     {
+        Reg.clearStage();
         FlxG.switchState(new GameScene());
     }
 
@@ -83,7 +83,6 @@ class MenuScene extends FlxState
     public override function destroy():Void
     {
         Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);
-        kill();
 
         super.destroy();
     }

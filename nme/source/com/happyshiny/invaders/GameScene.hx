@@ -17,17 +17,17 @@ import org.flixel.FlxU;
 
 class GameScene extends FlxState
 {
+    public static var gameOver : Bool = false;
+
     public override function create():Void
     {
-        #if !android
-        FlxG.mouse.show();
-        #end
+        GameScene.gameOver = false;
 
         // Keyboard events
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 
         SoundManager.stop();
-        SoundManager.play("artillery", 1.0);
+        SoundManager.play("warsounds", 0.5);
 
         // Starfield
         add(new Starfield(200));
@@ -64,6 +64,8 @@ class GameScene extends FlxState
         if (e.keyCode == 27)
         {
             e.stopImmediatePropagation();
+            
+            Reg.clearStage();
             FlxG.switchState(new MenuScene());
         }
     }
@@ -71,7 +73,6 @@ class GameScene extends FlxState
     public override function destroy():Void
     {
         Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);
-        kill();
 
         super.destroy();
     }
@@ -108,5 +109,17 @@ class GameScene extends FlxState
                 }
             }
         }
+    }
+
+    public static function endGame(winner : String, ships : Int)
+    {
+        if (GameScene.gameOver) return;
+
+        GameScene.gameOver = true;
+        Reg.clearStage();
+        var scene = new EndScene();
+        scene.winner = winner;
+        scene.shipsRemaining = ships;
+        FlxG.switchState(scene);
     }
 }

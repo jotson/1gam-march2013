@@ -20,13 +20,9 @@ class Human extends FlxSprite
     private var fastMode : Bool = false;
     private var frozen : Bool = false;
 
-    private var invaderExplosion : InvaderExplosion;
-
     public function new()
     {
         super();
-
-        invaderExplosion = new InvaderExplosion();
 
         width = 50;
         height = 50;

@@ -187,3 +187,21 @@ class BlockExplosion extends FlxEmitter
         SoundManager.play("explosion2");
     }
 }
+
+class Smoke extends FlxEmitter
+{
+    var COUNT = 25;
+
+    public function new()
+    {
+        super();
+
+        minParticleSpeed = new FlxPoint(-25,0);
+        maxParticleSpeed = new FlxPoint(25,20);
+        gravity = -50;
+
+        particleClass = FadingParticle;
+
+        makeParticles("assets/images/particle-white.png", COUNT);
+    }
+}

@@ -43,18 +43,6 @@ class ReverseInvaders extends Sprite
         var fps = new FPS(0, 0, 0xff0000);
         Lib.current.stage.addChild(fps);
 
-        // <sound path="crash.wav" id="crash" />
-        // <sound path="explosion1.wav" id="explosion1" />
-        // <sound path="explosion2.wav" id="explosion2" />
-        // <sound path="railgun.wav" id="railgun" />
-        // <sound path="ricochet1.wav" id="ricochet1" />
-        // <sound path="ricochet2.wav" id="ricochet2" />
-        // <sound path="ricochet3.wav" id="ricochet3" />
-        // <sound path="ricochet4.wav" id="ricochet4" />
-        // <music path="war-sounds.mp3" id="warsounds" />
-        // <music path="music.mp3" id="music" />
-        // <music path="artillery.mp3" id="artillery" />
-        
         // FlxG.debug = true;
         // FlxG.log("Game starting");
         // FlxG._game._debugger.visible = true;

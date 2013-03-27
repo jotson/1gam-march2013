@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
     <meta title="Reverse Invaders" package="com.happyshiny.invaders" version="1.0.0" company="Happy Shiny" />
-    <app main="com.happyshiny.invaders.ReverseInvaders" file="ReverseInvaders" path="build" swf-version="11.2" />
+    <app main="com.happyshiny.invaders.ReverseInvaders" file="ReverseInvaders" path="build" swf-version="11" />
     
     <window width="800" height="500" orientation="landscape" resizable="true" background="0x000000" />
 
@@ -16,22 +16,8 @@
     <assets path="assets/images" />
     <assets path="assets/fonts" />
 
-    <set name="mp3" if="android" />
-    <set name="mp3" if="flash" />
-
-    <assets path="assets/sounds" unless="mp3">
-        <sound path="crash.wav" id="crash" />
-        <sound path="explosion1.wav" id="explosion1" />
-        <sound path="explosion2.wav" id="explosion2" />
-        <sound path="railgun.wav" id="railgun" />
-        <sound path="ricochet1.wav" id="ricochet1" />
-        <sound path="ricochet2.wav" id="ricochet2" />
-        <sound path="ricochet3.wav" id="ricochet3" />
-        <sound path="ricochet4.wav" id="ricochet4" />
-        <sound path="war-sounds.wav" id="warsounds" />
-        <sound path="music.wav" id="music" />
-        <sound path="artillery.wav" id="artillery" />
-    </assets>
+    <set name="mp3" if="web" />
+    <set name="mp3" if="mobile" />
 
     <assets path="assets/sounds" if="mp3">
         <sound path="crash.mp3" id="crash" />
@@ -42,9 +28,23 @@
         <sound path="ricochet2.mp3" id="ricochet2" />
         <sound path="ricochet3.mp3" id="ricochet3" />
         <sound path="ricochet4.mp3" id="ricochet4" />
-        <sound path="war-sounds.mp3" id="warsounds" />
-        <sound path="music.mp3" id="music" />
-        <sound path="artillery.mp3" id="artillery" />
+        <music path="war-sounds.mp3" id="warsounds" />
+        <music path="music.mp3" id="music" />
+        <music path="artillery.mp3" id="artillery" />
+    </assets>
+
+    <assets path="assets/sounds" unless="mp3">
+        <sound path="crash.wav" id="crash" />
+        <sound path="explosion1.wav" id="explosion1" />
+        <sound path="explosion2.wav" id="explosion2" />
+        <sound path="railgun.wav" id="railgun" />
+        <sound path="ricochet1.wav" id="ricochet1" />
+        <sound path="ricochet2.wav" id="ricochet2" />
+        <sound path="ricochet3.wav" id="ricochet3" />
+        <sound path="ricochet4.wav" id="ricochet4" />
+        <music path="war-sounds.wav" id="warsounds" />
+        <music path="music.wav" id="music" />
+        <music path="artillery.wav" id="artillery" />
     </assets>
 
     <!-- <certificate />

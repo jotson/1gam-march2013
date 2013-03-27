@@ -27,28 +27,28 @@ class InvaderGroup extends FlxGroup
 
         Reg.invaderGroup = this;
 
+        var xOffset = Math.floor(FlxG.width/2 - (50*11)/2);
+        
         for(i in 0...11)
         {
             if (demo)
             {
-                add(new Invader(60 + 50 * i, y, 2));
-                add(new Invader(60 + 50 * i, y + 50, 1));
-                add(new Invader(60 + 50 * i, y + 100, 3));
+                add(new Invader(xOffset + 50 * i, y, 2, 'demo'));
+                add(new Invader(xOffset + 50 * i, y + 50, 1, 'demo'));
+                add(new Invader(xOffset + 50 * i, y + 100, 3, 'demo'));
             }
             else
             {
-                add(new Invader(60 + 50 * i, y, 2));
-                add(new Invader(60 + 50 * i, y + 50, 1));
-                add(new Invader(60 + 50 * i, y + 100, 1));
-                add(new Invader(60 + 50 * i, y + 150, 3));
-                add(new Invader(60 + 50 * i, y + 200, 3));
+                add(new Invader(xOffset + 50 * i, y, 2));
+                add(new Invader(xOffset + 50 * i, y + 50, 1));
+                add(new Invader(xOffset + 50 * i, y + 100, 1));
+                add(new Invader(xOffset + 50 * i, y + 150, 3));
+                add(new Invader(xOffset + 50 * i, y + 200, 3));
             }
         }
 
         this.descend = descend;
         this.y = y;
-
-        findEdges();
 
         for(i in 0...length)
         {
@@ -65,9 +65,17 @@ class InvaderGroup extends FlxGroup
         {
             findEdges();
         }
-        else
+
+        if (leftEdge != null && rightEdge != null && bottomEdge != null)
         {
-            if (leftEdge.x <= 0 || rightEdge.x + rightEdge.width >= FlxG.width) {
+            if (bottomEdge.y + bottomEdge.height >= FlxG.height)
+            {
+                GameScene.endGame("invaders", countLiving());
+                return;
+            }
+
+            if (leftEdge.x <= 0 || rightEdge.x + rightEdge.width >= FlxG.width)
+            {
                 // Change direction and move down
                 dir = -dir;
 
@@ -79,13 +87,8 @@ class InvaderGroup extends FlxGroup
                     if (invader.alive) invader.updateMovement(descend);
                 }
             }
-
-            if (bottomEdge.y + bottomEdge.height >= FlxG.height)
-            {
-                Reg.invadersWin();
-            }
         }
-    }
+   }
 
     public function findEdges()
     {
@@ -97,7 +100,7 @@ class InvaderGroup extends FlxGroup
         {
             if (!Reg.isClass(members[i], "com.happyshiny.invaders.Invader")) continue;
             var invader = cast(members[i], Invader);
-            if (invader.alive)
+            if (invader.alive && invader.mode != 'crashing')
             {
                 if (leftEdge == null || invader.x < leftEdge.x)
                 {
@@ -115,8 +118,8 @@ class InvaderGroup extends FlxGroup
             }
         }
 
-        if (length == 0) {
-            Reg.humansWin();
+        if (length > 0 && countLiving() <= 0) {
+            GameScene.endGame('humans', countLiving());
         }
     }
 }
@@ -126,92 +129,155 @@ class Invader extends FlxSprite
     private var shield : Bool = false;
     private var bombTimer : Float = 0;
     private var talkTimer : Float = 0;
-    private var z = 200;
+    private var jumpTimer : Float = 0;
+    public var kind : Int = 1;
+    public var mode : String = 'normal';
     public var hasShield : Bool = false;
+    public var smoke : Smoke = null;
 
-    public function new(x : Int, y: Int, kind : Int)
+    public function new(x : Int, y: Int, kind : Int, mode : String = 'normal')
     {
         super(x, y);
 
         loadGraphic("assets/images/invaders.png", true, true, 50, 50);
 
         // addFilter(new GlowFilter(0x3399ff, 0.5, 10, 10, 0.5, 1), new FlxPoint(0, 0));
+        
+        this.mode = mode;
 
         width = 30;
         height = 30;
         centerOffsets();
 
+        this.kind = kind;
         var animSpeed = Std.random(4) + 1;
-        if (kind == 1)
-        {
-            addAnimation("default", [0,1], animSpeed, true);
-        }
-        if (kind == 2)
-        {
-            addAnimation("default", [2,3], animSpeed, true);
-        }
-        if (kind == 3)
-        {
-            addAnimation("default", [4,5], animSpeed, true);
-        }
+        addAnimation("default1", [0,1], animSpeed, true);
+        addAnimation("default2", [2,3], animSpeed, true);
+        addAnimation("default3", [4,5], animSpeed, true);
 
-        play("default");
+        play("default" + kind);
     }
 
     public override function update()
     {
         super.update();
 
-        var dt:Float = FlxG.elapsed;
-        bombTimer += dt;
-        talkTimer += dt;
-
-        if (bombTimer > 1)
+        if (mode == 'crashing')
         {
-            bombTimer = 0;
-            bomb();
-        }
+            alpha = Math.random();
 
-        if (talkTimer > 1)
-        {
-            talkTimer = 0;
-            talk();
-        }
-
-        if (!hasShield)
-        {
-            var points = [];
-            #if (ios || android)
-            for (touch in FlxG.touchManager.touches)
+            if (y > FlxG.height * 2)
             {
-                if (touch.pressed())
+                kill();
+            }
+
+            if (smoke != null)
+            {
+                smoke.at(this);
+            }
+        }
+        else
+        {
+            var dt:Float = FlxG.elapsed;
+            bombTimer += dt;
+            talkTimer += dt;
+            jumpTimer -= dt;
+
+            if (bombTimer > 1)
+            {
+                bombTimer = 0;
+                bomb();
+            }
+
+            if (talkTimer > 1)
+            {
+                talkTimer = 0;
+                talk();
+            }
+
+            if (mode == 'jumping')
+            {
+                if (jumpTimer < 0)
                 {
-                    points.push(touch.getScreenPosition());
+                    jump();
+                }
+
+                if (y + height > FlxG.height)
+                {
+                    y = FlxG.height - height;
+                    velocity.y = 0;
+                }
+
+                if (x + width > FlxG.width)
+                {
+                    x = FlxG.width - width - 1;
+                    velocity.x = -velocity.x;
+                }
+
+                if (x < 0)
+                {
+                    x = 1;
+                    velocity.x = -velocity.x;
                 }
             }
-            #else
-            points.push(new FlxPoint(FlxG.mouse.screenX, FlxG.mouse.screenY));
-            #end
-            if (points.length != 0)
+
+            // Collisions
+            if (mode == 'normal')
             {
-                for(point in points)
+                // TODO This is killing performance!
+                // FlxG.overlap(Reg.invaderGroup, Reg.blockGroup, function(invader, block) {
+                //     block.kill();
+                // });
+
+                // FlxG.overlap(Reg.invaderGroup, Reg.human, function(bomb, human) {
+                //     var explosion = cast(FlxG.state.recycle(HumanExplosion), HumanExplosion);
+                //     explosion.goBoom(human);
+
+                //     human.kill();
+
+                //     GameScene.endGame('invaders', countLiving());
+                // });
+            }
+
+            if (!hasShield)
+            {
+                var points = [];
+                #if (ios || android)
+                for (touch in FlxG.touchManager.touches)
                 {
-                    if (overlapsPoint(point) && !hasShield)
+                    if (touch.pressed())
                     {
-                        hasShield = true;
-                        var shield : Shield = cast(Reg.shieldGroup.recycle(Shield), Shield);
-                        shield.parent = this;
-                        shield.revive();
+                        points.push(touch.getScreenPosition());
+                    }
+                }
+                #else
+                points.push(new FlxPoint(FlxG.mouse.screenX, FlxG.mouse.screenY));
+                #end
+                if (points.length != 0)
+                {
+                    for(point in points)
+                    {
+                        if (overlapsPoint(point) && !hasShield)
+                        {
+                            hasShield = true;
+                            var shield : Shield = cast(Reg.shieldGroup.recycle(Shield), Shield);
+                            shield.parent = this;
+                            shield.revive();
+                        }
                     }
                 }
             }
         }
+
     }
 
     public function updateMovement(y : Float)
     {
-        this.y += y;
-        velocity.x = Reg.invaderGroup.dir * Reg.invaderGroup.speed;
+        if (mode == 'normal')
+        {
+            this.y += y;
+            velocity.x = Reg.invaderGroup.dir * Reg.invaderGroup.speed;
+        }
     }
 
     public function bomb()
@@ -235,16 +301,63 @@ class Invader extends FlxSprite
 
     public override function kill()
     {
-        super.kill();
+        if (smoke != null) smoke.kill();
 
-        Reg.invaderGroup.findEdges();
+        if (mode == 'normal')
+        {
+            SoundManager.play("crash");
+            mode = 'crashing';
+            acceleration.y = 500;
+            velocity.y = -150;
+            angularVelocity = Std.random(720)-360;
+
+            smoke = cast(FlxG.state.recycle(Smoke), Smoke);
+            smoke.start(false, 1, 0.05);
+            FlxG.state.add(smoke);
+
+            Reg.invaderGroup.remove(this);
+            FlxG.state.add(this);
+
+            Reg.invaderGroup.findEdges();
+        }
+        else if (mode == 'crashing')
+        {
+            mode = 'dead';
+            super.kill();
+        }
+        else
+        {
+            mode = 'dead';
+            super.kill();
+        }
+    }
+
+    public override function revive()
+    {
+        super.revive();
+        acceleration.y = 0;
+        angularVelocity = 0;
+        drag = null;
+        smoke = null;
+    }
+
+    public function jump()
+    {
+        jumpTimer = Math.random() * 2 + 1;
+
+        if (Reg.invaderGroup != null) return;
+        if (y < FlxG.height - height) return;
+
+        y = FlxG.height - height - 1;
+        velocity.x = Std.random(400) - 200;
+        velocity.y = -500;
+        acceleration.y = 500;
+        drag = new FlxPoint(40, 0);
     }
 }
 
 class Bomb extends FlxSprite
 {
-    private var z = 100;
-
     public function new()
     {
         super();
@@ -298,7 +411,6 @@ class Shield extends FlxSprite
 {
     public var parent : Invader = null;
     private var lifetime = 2.0; // seconds
-    private var z = 200;
 
     public function new()
     {
