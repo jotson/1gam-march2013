@@ -18,22 +18,6 @@ fi
 if [ "$MODE" = "flash" ]; then
     echo "Building Flash target"
     nme test $NME/project.nmml flash $DEBUG
-    
-    echo "Building HTML"
-    if [ -e $BUILD ]; then
-        rm -r $BUILD
-    fi
-    mkdir -p $BUILD
-
-    sed "s/{VERSION}/$VERSION/g" $ROOT/index.html >$BUILD/index.html
-    rsync -az $ROOT/js/ $BUILD/
-    cp $NME/build/flash/bin/* $BUILD
-
-    echo "Copying HTML build to destination"
-    rsync -az --delete $BUILD/ $WWW
-
-    SIZE=`du -sh $BUILD/*.swf | awk '{ print $1 }'`
-    echo "Flash file size: $SIZE"
 fi
 
 if [ "$MODE" = "linux" ]; then
@@ -44,6 +28,33 @@ fi
 if [ "$MODE" = "android" ]; then
     echo "Building Android target"
     nme test $NME/project.nmml android $DEBUG
+fi
+
+if [ "$MODE" = "html" ]; then
+    echo "Building HTML"
+    if [ -e $BUILD ]; then
+        rm -r $BUILD
+    fi
+    mkdir -p $BUILD
+    sed "s/{VERSION}/$VERSION/g" $ROOT/index.html >$BUILD/index.html
+    rsync -az $ROOT/js/ $BUILD/
+
+    echo "Building Flash target"
+    nme build $NME/project.nmml flash $DEBUG >/dev/null
+    cp $NME/build/flash/bin/*.swf $BUILD
+
+    echo "Building Android target"
+    nme build $NME/project.nmml android $DEBUG >/dev/null
+    cp $NME/build/android/bin/bin/*-debug.apk $BUILD
+
+    echo "Copying HTML build to web root"
+    rsync -az --delete $BUILD/ $WWW
+
+    SIZE=`du -sh $BUILD/*.swf | awk '{ print $1 }'`
+    echo "Flash file size: $SIZE"
+
+    SIZE=`du -sh $BUILD/*.apk | awk '{ print $1 }'`
+    echo "Android file size: $SIZE"
 fi
 
 echo "Done"
