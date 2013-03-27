@@ -7,6 +7,7 @@ import org.flixel.FlxPoint;
 import org.flixel.FlxGroup;
 import org.flixel.FlxState;
 import org.flixel.FlxG;
+import org.flixel.FlxPoint;
 import org.flixel.tweens.util.Ease;
 import nme.Lib;
 
@@ -15,6 +16,9 @@ class InvaderGroup extends FlxGroup
     private var leftEdge : Invader = null;
     private var rightEdge : Invader = null;
     private var bottomEdge : Invader = null;
+
+    private var mouseTimer : Float = 0;
+    private var points : Array<FlxPoint>;
 
     public var y : Float = 0;
     public var dir = 1;
@@ -26,6 +30,8 @@ class InvaderGroup extends FlxGroup
         super();
 
         Reg.invaderGroup = this;
+
+        points = new Array<FlxPoint>();
 
         var xOffset = Math.floor(FlxG.width/2 - (50*11)/2);
 
@@ -61,6 +67,8 @@ class InvaderGroup extends FlxGroup
     {
         super.update();
 
+        var dt:Float = FlxG.elapsed;
+
         // Collisions
         FlxG.overlap(Reg.invaderGroup, Reg.blockGroup, function(invader, block) {
             block.kill();
@@ -75,6 +83,45 @@ class InvaderGroup extends FlxGroup
             GameScene.endGame('invaders', countLiving());
             return;
         });
+
+        // Check mouse/touch input
+        #if mobile
+        for (touch in FlxG.touchManager.touches)
+        {
+            if (touch.pressed())
+            {
+                points.push(touch.getScreenPosition());
+            }
+        }
+        #else
+        points.push(new FlxPoint(FlxG.mouse.screenX, FlxG.mouse.screenY));
+        #end
+
+        mouseTimer += dt;
+        if (points.length != 0 && mouseTimer > 0.1)
+        {
+            mouseTimer = 0;
+            for(point in points)
+            {
+                for(i in 0...length)
+                {
+                    if (members[i] == null) continue;
+                    var invader = cast(members[i], Invader);
+                    if (invader.alive && !invader.hasShield)
+                    {
+                        if (invader.overlapsPoint(point))
+                        {
+                            invader.hasShield = true;
+                            var shield : Shield = cast(Reg.shieldGroup.recycle(Shield), Shield);
+                            shield.parent = invader;
+                            shield.revive();
+                            break;
+                        }
+                    }
+                }
+            }
+            points = new Array<FlxPoint>();
+        }
 
         // Find invaders at the outermost edges
         if (leftEdge == null || rightEdge == null || bottomEdge == null)
@@ -146,7 +193,7 @@ class Invader extends FlxSprite
     private var bombTimer : Float = 0;
     private var talkTimer : Float = 0;
     private var jumpTimer : Float = 0;
-    private var mouseTimer : Float = 0;
+
     public var kind : Int = 1;
     public var mode : String = 'normal';
     public var hasShield : Bool = false;
@@ -235,42 +282,6 @@ class Invader extends FlxSprite
                 {
                     x = 1;
                     velocity.x = -velocity.x;
-                }
-            }
-
-            if (!hasShield)
-            {
-                var points = [];
-
-                #if mobile
-                for (touch in FlxG.touchManager.touches)
-                {
-                    if (touch.pressed())
-                    {
-                        points.push(touch.getScreenPosition());
-                    }
-                }
-                #else
-                mouseTimer += dt;
-                if (mouseTimer > 0.03)
-                {
-                    points.push(new FlxPoint(FlxG.mouse.screenX, FlxG.mouse.screenY));
-                    mouseTimer = 0;
-                }
-                #end
-
-                if (points.length != 0)
-                {
-                    for(point in points)
-                    {
-                        if (overlapsPoint(point) && !hasShield)
-                        {
-                            hasShield = true;
-                            var shield : Shield = cast(Reg.shieldGroup.recycle(Shield), Shield);
-                            shield.parent = this;
-                            shield.revive();
-                        }
-                    }
                 }
             }
         }
