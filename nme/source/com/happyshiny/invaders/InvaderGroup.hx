@@ -146,6 +146,7 @@ class Invader extends FlxSprite
     private var bombTimer : Float = 0;
     private var talkTimer : Float = 0;
     private var jumpTimer : Float = 0;
+    private var mouseTimer : Float = 0;
     public var kind : Int = 1;
     public var mode : String = 'normal';
     public var hasShield : Bool = false;
@@ -240,7 +241,8 @@ class Invader extends FlxSprite
             if (!hasShield)
             {
                 var points = [];
-                #if (ios || android)
+
+                #if mobile
                 for (touch in FlxG.touchManager.touches)
                 {
                     if (touch.pressed())
@@ -249,8 +251,14 @@ class Invader extends FlxSprite
                     }
                 }
                 #else
-                points.push(new FlxPoint(FlxG.mouse.screenX, FlxG.mouse.screenY));
+                mouseTimer += dt;
+                if (mouseTimer > 0.03)
+                {
+                    points.push(new FlxPoint(FlxG.mouse.screenX, FlxG.mouse.screenY));
+                    mouseTimer = 0;
+                }
                 #end
+
                 if (points.length != 0)
                 {
                     for(point in points)
