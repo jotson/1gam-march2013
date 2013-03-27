@@ -61,6 +61,22 @@ class InvaderGroup extends FlxGroup
     {
         super.update();
 
+        // Collisions
+        FlxG.overlap(Reg.invaderGroup, Reg.blockGroup, function(invader, block) {
+            block.kill();
+        });
+
+        FlxG.overlap(Reg.invaderGroup, Reg.human, function(bomb, human) {
+            var explosion = cast(FlxG.state.recycle(HumanExplosion), HumanExplosion);
+            explosion.goBoom(human);
+
+            human.kill();
+
+            GameScene.endGame('invaders', countLiving());
+            return;
+        });
+
+        // Find invaders at the outermost edges
         if (leftEdge == null || rightEdge == null || bottomEdge == null)
         {
             findEdges();
@@ -219,24 +235,6 @@ class Invader extends FlxSprite
                     x = 1;
                     velocity.x = -velocity.x;
                 }
-            }
-
-            // Collisions
-            if (mode == 'normal')
-            {
-                // TODO This is killing performance!
-                // FlxG.overlap(Reg.invaderGroup, Reg.blockGroup, function(invader, block) {
-                //     block.kill();
-                // });
-
-                // FlxG.overlap(Reg.invaderGroup, Reg.human, function(bomb, human) {
-                //     var explosion = cast(FlxG.state.recycle(HumanExplosion), HumanExplosion);
-                //     explosion.goBoom(human);
-
-                //     human.kill();
-
-                //     GameScene.endGame('invaders', countLiving());
-                // });
             }
 
             if (!hasShield)
