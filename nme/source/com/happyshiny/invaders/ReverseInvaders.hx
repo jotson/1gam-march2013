@@ -56,16 +56,16 @@ class ReverseInvaders extends Sprite
 
         // Load sounds
         SoundManager.add("crash", "crash");
-        SoundManager.add("explosion1", "explosion1", 10);
+        SoundManager.add("explosion1", "explosion1");
         SoundManager.add("explosion2", "explosion2");
-        SoundManager.add("railgun", "railgun", false, 20);
+        SoundManager.add("railgun", "railgun");
         SoundManager.add("ricochet", "ricochet1");
         SoundManager.add("ricochet", "ricochet2");
         SoundManager.add("ricochet", "ricochet3");
         SoundManager.add("ricochet", "ricochet4");
-        SoundManager.add("warsounds", "warsounds", true);
-        SoundManager.add("artillery", "artillery", true);
-        SoundManager.add("music", "music", true);
+        SoundManager.add("warsounds", "warsounds");
+        SoundManager.add("artillery", "artillery");
+        SoundManager.add("music", "music");
     }
 
     public static function main()

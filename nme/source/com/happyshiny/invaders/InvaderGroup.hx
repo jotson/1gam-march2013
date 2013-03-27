@@ -28,7 +28,7 @@ class InvaderGroup extends FlxGroup
         Reg.invaderGroup = this;
 
         var xOffset = Math.floor(FlxG.width/2 - (50*11)/2);
-        
+
         for(i in 0...11)
         {
             if (demo)

@@ -26,8 +26,7 @@ class GameScene extends FlxState
         // Keyboard events
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 
-        SoundManager.stop();
-        SoundManager.play("warsounds", 0.5);
+        SoundManager.playMusic("warsounds", 0.5);
 
         // Starfield
         add(new Starfield(200));

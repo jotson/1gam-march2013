@@ -22,9 +22,7 @@ class MenuScene extends FlxState
         // Keyboard events
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 
-        SoundManager.stop();
-        // SoundManager.play("artillery", 1.0);
-        SoundManager.play("warsounds", 0.5);
+        SoundManager.playMusic("warsounds", 0.5);
 
         // Starfield
         add(new Starfield(200));
@@ -55,8 +53,6 @@ class MenuScene extends FlxState
         add(new Button(FlxG.width/2 + 100, 350, "assets/images/quit-button.png",
                         function() { Lib.exit(); }));
         #end
-        
-        // TODO Sound on/off button
     }
     
     public function startGame()

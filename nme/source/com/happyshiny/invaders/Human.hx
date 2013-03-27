@@ -19,10 +19,13 @@ class Human extends FlxSprite
     private var dirTimer : Float = 0;
     private var fastMode : Bool = false;
     private var frozen : Bool = false;
+    public var mode : String = 'normal';
 
-    public function new()
+    public function new(mode : String = 'normal')
     {
         super();
+
+        this.mode = mode;
 
         width = 50;
         height = 50;
@@ -32,10 +35,17 @@ class Human extends FlxSprite
         x = FlxG.width/2 - width/2;
         y = FlxG.height - height/2;
 
-        freeze();
-        
-        shotTimer = 5;
-        dirTimer = 3;
+        if (mode == 'normal')
+        {
+            freeze();
+            shotTimer = 5;
+            dirTimer = 3;
+        }
+        else
+        {
+            shotTimer = 99999;
+            dirTimer = 0;
+        }
     }
 
     public override function update()
@@ -43,36 +53,39 @@ class Human extends FlxSprite
         super.update();
 
         // Collisions
-        FlxG.overlap(Reg.missileGroup, Reg.blockGroup, function(missile, block) {
-            var explosion = cast(FlxG.state.recycle(BlockExplosion), BlockExplosion);
-            explosion.goBoom(block);
+        if (mode == 'normal')
+        {
+            FlxG.overlap(Reg.missileGroup, Reg.blockGroup, function(missile, block) {
+                var explosion = cast(FlxG.state.recycle(BlockExplosion), BlockExplosion);
+                explosion.goBoom(block);
 
-            missile.kill();
-            block.kill();
-        });
-        
-        FlxG.overlap(Reg.missileGroup, Reg.invaderGroup, function(missile, invader) {
-            var explosion = cast(FlxG.state.recycle(InvaderExplosion), InvaderExplosion);
-            explosion.goBoom(invader);
+                missile.kill();
+                block.kill();
+            });
+            
+            FlxG.overlap(Reg.missileGroup, Reg.invaderGroup, function(missile, invader) {
+                var explosion = cast(FlxG.state.recycle(InvaderExplosion), InvaderExplosion);
+                explosion.goBoom(invader);
 
-            missile.kill();
-            invader.kill();
-        });
-        
-        FlxG.overlap(Reg.missileGroup, Reg.bombGroup, function(missile, bomb) {
-            var explosion = cast(FlxG.state.recycle(BlockExplosion), BlockExplosion);
-            explosion.goBoom(bomb);
+                missile.kill();
+                invader.kill();
+            });
+            
+            FlxG.overlap(Reg.missileGroup, Reg.bombGroup, function(missile, bomb) {
+                var explosion = cast(FlxG.state.recycle(BlockExplosion), BlockExplosion);
+                explosion.goBoom(bomb);
 
-            missile.kill();
-            bomb.kill();
-        });
-        
-        FlxG.overlap(Reg.missileGroup, Reg.shieldGroup, function(missile, shield) {
-            var explosion = cast(FlxG.state.recycle(ShieldExplosion), ShieldExplosion);
-            explosion.goBoom(missile);
+                missile.kill();
+                bomb.kill();
+            });
+            
+            FlxG.overlap(Reg.missileGroup, Reg.shieldGroup, function(missile, shield) {
+                var explosion = cast(FlxG.state.recycle(ShieldExplosion), ShieldExplosion);
+                explosion.goBoom(missile);
 
-            missile.kill();
-        });
+                missile.kill();
+            });
+        }
         
         shotTimer -= FlxG.elapsed;
         dirTimer -= FlxG.elapsed;
@@ -97,6 +110,8 @@ class Human extends FlxSprite
 
     public function fire()
     {
+        if (mode != 'normal') return;
+
         // Check for shot
         // If underneath invader, canFire = true
         // If underneath bunker, canFire = false
@@ -205,8 +220,6 @@ class Human extends FlxSprite
         frozen = true;
         velocity.x = 0;
     }
-
-
 }
 
 class Missile extends FlxSprite

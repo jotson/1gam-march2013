@@ -7,166 +7,63 @@ import org.flixel.FlxG;
 import org.flixel.FlxSound;
 
 class SoundManager {
-    public static var varmap : Hash<VariationMap>;
+    public static var varmap : Hash<Array<String>>;
 
-    public static function add(id : String, embeddedSound : String, loop : Bool = false, channels : Int = 0) : Void
+    /**
+     * This method creats a map of keys to embedded sound IDs for the purpose
+     * of playing random variants of a given sound using a single key.
+     * @param key           : String The key that the sound will be known as
+     * @param embeddedSound : String The actual embedded sound ID
+     * @param loop          : Bool
+     * @param channels      : Int
+     */
+    public static function add(key : String, embeddedSound : String) : Void
     {
         if (varmap == null)
         {
-            varmap = new Hash<VariationMap>();
+            varmap = new Hash<Array<String>>();
         }
 
-        var m : VariationMap;
-        if (varmap.exists(id)) {
-            m = varmap.get(id);
+        var m : Array<String>;
+        if (varmap.exists(key)) {
+            m = varmap.get(key);
         }
         else
         {
-            m = new VariationMap();
+            m = new Array<String>();
         }
-        m.add(embeddedSound, loop, channels);
-        varmap.set(id, m);
-    }
-
-    public static function play(id : String, volume : Float = 1.0) {
-        if (FlxG.mute) return;
-
-        if (!varmap.exists(id)) return;
-
-        var s = varmap.get(id);
-        var sound = s.get();
-        sound.volume = volume;
-        sound.play();
+        m.push(embeddedSound);
+        varmap.set(key, m);
     }
 
     /**
-     * Stop a sound or all sounds
-     * @param  id :             String sound id
-     * @return
+     * Play a random variation of the sound represented by key.
+     * If the key doesn't exist, then assume it is an embedded sound ID.
+     * @param  key    :             String
+     * @param  volume :             Float
+     * @param  loop   :             Bool
      */
-    public static function stop(id : String = null) : Void
+    public static function play(key : String, volume : Float = 1.0, loop : Bool = false) : Void
     {
-    }
-    
-}
+        var embeddedSound = key;
 
-class VariationMap {
-    public static var MAX_CHANNELS = 5;
-
-    public var volume : Float = 1.0;
-    public var channel : Int = -1;
-    public var sounds : Hash<Array<MySound>>;
-
-    public function new()
-    {
-        sounds = new Hash<Array<MySound>>();
-    }
-
-    public function add(embeddedSound : String, loop : Bool, channels : Int = 0)
-    {
-        // Add MAX_CHANNELS instances of each embeddedSound
-        var s : Array<MySound> = new Array<MySound>();
-        if (channels == 0) channels = MAX_CHANNELS;
-        if (loop) channels = 1;
-        for(i in 0...channels)
-        {
-            var sound = new MySound();
-            sound.loadEmbedded(embeddedSound, loop);
-            s.push(sound);
+        if (varmap.exists(key)) {
+            // Choose a random variation
+            var m = varmap.get(key);
+            embeddedSound = m[Std.random(m.length)];
         }
-        sounds.set(embeddedSound, s);
+
+        #if android
+        FlxG.addSound(embeddedSound);
+        #end
+        FlxG.play(embeddedSound, volume, loop);
     }
 
-    public function get() : MySound
+    public static function playMusic(embeddedSound : String, volume : Float = 1.0) : Void
     {
-        // Pick a random variation
-        var keys = new Array();
-        for(id in sounds.keys())
-        {
-            keys.push(id);
-        }
-        var key = keys[Std.random(keys.length)];
-
-        // Get the next channel
-        var s = sounds.get(key);
-        channel++;
-        if (channel >= s.length) channel = 0;
-
-        return s[channel];
-    }
-
-    public function stop() : Void
-    {
-        // Stop playing all channels in all variations
-        for(id in sounds.keys())
-        {
-            var s = sounds.get(id);
-            for(sound in s)
-            {
-                sound.pause();
-            }
-        }
-    }
-}
-
-class MySound extends FlxSound
-{
-    var id = "";
-    public override function loadEmbedded(EmbeddedSound:Dynamic, Looped:Bool = false, AutoDestroy:Bool = false):FlxSound
-    {
-        id = EmbeddedSound;
-        return cast(super.loadEmbedded(EmbeddedSound, Looped, AutoDestroy), FlxSound);
-    }
-
-    public override function play(ForceRestart:Bool = false):Void
-    {
-        // The _channel = null and _channel.stop() calls in FlxSound.cleanup()
-        // kill sounds in SDL so, set ForceRestart to false.
-        super.play(false);
-        // trace('Starting ' + id + ' ' + _channel);
-    }
-
-    public override function stop():Void
-    {
-        super.stop();
-        // trace('Stopping ' + id + ' ' + _channel);
-    }
-
-    override private function startSound(Position:Float):Void
-    {
-        // FlxSound.play() is buggy with respect to looping MP3s on SDL
-        // It tries to loop 9999 times which, in SDL, causes a segmentation fault.
-        // So, I'm overriding the looping behaviour by adding en event listener to
-        // the sound to just start playing again when it stops.
-        // The stopped() event handler already has functionality to restart the sounds
-        // so I can only guess that setting loops to 9999 helped with something...
-        // maybe gapless looping.
-        // if (_looped) trace("   Start Sound " + id + "_" + _looped + " " + _sound.length);
-        var numLoops = 0;
-        if (_looped) numLoops = 1;
-        // if (_looped) return;
-        _position = Position;
-        _paused = false;
-        _channel = _sound.play(_position, numLoops, _transform); // was (_position, numLoops, _transform)
-        if (_channel != null)
-        {
-            if (_channel.hasEventListener(Event.SOUND_COMPLETE))
-            {
-                _channel.removeEventListener(Event.SOUND_COMPLETE, stopped);
-            }
-            _channel.addEventListener(Event.SOUND_COMPLETE, stopped);
-            active = true;
-        }
-        else
-        {
-            exists = false;
-            active = false;
-        }
-    }
-
-    override private function stopped(event:Event = null):Void
-    {
-        // if (_looped) trace("Stopped " + id);
-        super.stopped(event);
+        #if android
+        FlxG.addSound(embeddedSound);
+        #end
+        FlxG.playMusic(embeddedSound, volume);
     }
 }

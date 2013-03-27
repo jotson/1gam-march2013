@@ -26,8 +26,7 @@ class EndScene extends FlxState
         // Keyboard events
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 
-        SoundManager.stop();
-        SoundManager.play("music", 1.0);
+        SoundManager.playMusic("music", 1.0);
 
         // Starfield
         add(new Starfield(200));
@@ -70,7 +69,7 @@ class EndScene extends FlxState
         if (winner == 'humans') {
             winText = 'Humans win!';
             invaderText = 'Better luck next time.';
-            add(new Human());
+            add(new Human('demo'));
         }
 
         // Buttons and text
@@ -94,12 +93,14 @@ class EndScene extends FlxState
         // Space bar
         if (e.keyCode == 32)
         {
+            e.stopImmediatePropagation();
             startGame();
         }
 
         // Escape key (also Android back button)
         if (e.keyCode == 27)
         {
+            e.stopImmediatePropagation();
             startGame();
         }
     }
