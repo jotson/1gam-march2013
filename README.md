@@ -33,9 +33,10 @@ combining the template /index.html, js, and nme builds into a single folder. Run
 You can also simply cd to the nme folder and compile with nme directly:
 
 `nme build flash`
-`nme build linux`
 
-etc.
+or
+
+`nme build linux`
 
 # Dev Notes
 
