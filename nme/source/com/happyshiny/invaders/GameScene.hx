@@ -45,7 +45,7 @@ class GameScene extends FlxState
         add(Reg.invaderGroup);
 
         // Get ready!
-        var getready = new FlxSprite(259, FlxG.height/2 - 100, "assets/images/getready.png");
+        var getready = new FlxSprite(FlxG.width/2 - 282/2, FlxG.height/2 - 115, "assets/images/getready.png");
         FlxG.tween(getready, { alpha: 0.2 }, 0.5, { type: FlxTween.PINGPONG, ease: Ease.quadInOut });
         FlxG.tween(getready, { x: getready.x }, 5, { complete: getready.kill });
         add(getready);

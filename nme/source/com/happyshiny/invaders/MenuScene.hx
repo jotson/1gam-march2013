@@ -28,7 +28,7 @@ class MenuScene extends FlxState
         add(new Starfield(200));
 
         // Title
-        add(new FlxSprite(56, 25, "assets/images/title.png"));
+        add(new FlxSprite(FlxG.width/2 - 687/2, 25, "assets/images/title.png"));
 
         // Groups for collision detection
         Reg.setupGroups();
