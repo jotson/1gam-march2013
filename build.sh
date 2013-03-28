@@ -37,7 +37,7 @@ if [ "$MODE" = "html" ]; then
     fi
     mkdir -p $BUILD
     sed "s/{VERSION}/$VERSION/g" $ROOT/index.html >$BUILD/index.html
-    rsync -az $ROOT/js/ $BUILD/
+    rsync -az --exclude=index.html $ROOT/js/ $BUILD/
 
     echo "Building Flash target"
     nme build $NME/project.nmml flash $DEBUG >/dev/null
