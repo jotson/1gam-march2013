@@ -58,7 +58,6 @@ class SoundManager {
         #end
 
         #if html
-            // var sound:NonDynamicSound = cast(FlxG.sounds.recycle(NonDynamicSound), NonDynamicSound);
             // The HTML5 target (at least, Chrome) doesn't seem to like the recycled sound channels that
             // FlxG.sounds.recycle() gives it. It quickly bombs with an error in
             // browser.media.SoundChannel#setSoundTransform() because nmeAudio somehow becomes null.
