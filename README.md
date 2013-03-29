@@ -19,7 +19,7 @@ Move the mouse pointer over ships to activate their shields. Try to block incomi
 
 # Build instructions
 
-This project can be compiled to Android, Flash, and Linux targets. It will probably also work with Mac and Windows targets but I haven't tested them. The js version works in Firefox and Chrome. It may work in IE and others but I haven't tested.
+The nme version can be compiled to Android, HTML5, Flash, and Linux targets. It will probably also work with Mac and Windows targets but I haven't tested them. The js version works in Firefox and Chrome. It may work in IE and others but I haven't tested.
 
 The js version has no requirements and doesn't technically need a build. Just run the index.html file in the js folder.
 
@@ -34,11 +34,14 @@ combining the template /index.html, js, and nme builds into a single folder. Run
 
 You can also simply cd to the nme folder and compile with nme directly:
 
-`nme build flash`
+- `nme build flash`
+- `nme build linux`
+- `nme build html5`
+- `nme build android`
+- `nme build windows`
+- `nme build mac`
 
-or
-
-`nme build linux`
+The NME HTML5 target has a couple of issues (centering text and some sound problems) but runs surprisingly well in Chrome. I'm sure those can be worked around or fixed (see SoundManager.hx) but I'm not interested in that for this particular project.
 
 # Dev Notes
 

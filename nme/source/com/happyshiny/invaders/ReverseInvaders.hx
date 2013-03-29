@@ -35,10 +35,6 @@ class ReverseInvaders extends Sprite
 
         addChild(new Game());
 
-        #if !android
-        FlxG.mouse.show();
-        #end
-
         // Frame rate display
         var fps = new FPS(0, 0, 0xff0000);
         Lib.current.stage.addChild(fps);
@@ -84,6 +80,11 @@ class Game extends FlxGame
         var ratioY:Float = stageHeight / 500;
         var ratio:Float = Math.min(ratioX, ratioY);
 
-        super(Math.ceil(stageWidth / ratio), Math.ceil(stageHeight / ratio), MenuScene, ratio, 60, 60);
+        #if web
+            var fps = 30;
+        #else
+            var fps = 60;
+        #end
+        super(Math.ceil(stageWidth / ratio), Math.ceil(stageHeight / ratio), MenuScene, ratio, fps, fps);
     }
 }

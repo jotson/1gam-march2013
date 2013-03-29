@@ -75,10 +75,8 @@ class EndScene extends FlxState
         // Buttons and text
         add(new Button(FlxG.width/2, 200, "assets/images/ok-button.png", startGame));
 
-        add(new FlxText(0, 50, FlxG.width, winText)
-            .setFormat("assets/fonts/Offside-Regular.ttf", 50, 0xff0000, "center", 0, false));
-        add(new FlxText(0, 110, FlxG.width, invaderText)
-            .setFormat("assets/fonts/Offside-Regular.ttf", 20, 0xff0000, "center", 0, false));
+        add(new FlxText(0, 50, FlxG.width, winText).setFormat("assets/fonts/PressStart2P-Regular.ttf", 40, 0xff0000, "center", 0, false));
+        add(new FlxText(0, 110, FlxG.width, invaderText).setFormat("assets/fonts/PressStart2P-Regular.ttf", 15, 0xff0000, "center", 0, false));
 
     }
     

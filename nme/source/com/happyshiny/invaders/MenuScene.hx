@@ -5,6 +5,7 @@ import nme.geom.Rectangle;
 import nme.net.SharedObject;
 import nme.Lib;
 import nme.ui.Mouse;
+import nme.display.BitmapData;
 import nme.events.KeyboardEvent;
 import org.flixel.FlxButton;
 import org.flixel.FlxG;
@@ -19,6 +20,16 @@ class MenuScene extends FlxState
 {
     public override function create():Void
     {
+        #if (desktop || flash)
+        FlxG.mouse.show();
+        #end
+
+        #if html
+        var cursor:BitmapData = new BitmapData(1, 1, FlxG.TRANSPARENT);
+        FlxG.mouse.show(cursor);
+        FlxG.mouse.useSystemCursor = true;
+        #end
+
         // Keyboard events
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 
